@@ -884,7 +884,10 @@ async function boot(){
   const forceDemo=new URLSearchParams(location.search).has("demo");
   let cfg=null;
   if(!forceDemo){ try{ cfg=await import("./firebase-config.js"); }catch(e){ cfg=null; } }
-  if(cfg && cfg.firebaseConfig?.apiKey && !/PASTE/.test(cfg.firebaseConfig.apiKey)){
+  if(cfg && (!cfg.firebaseConfig?.apiKey || /PASTE/.test(cfg.firebaseConfig.apiKey))){
+    configError="Firebase isn't connected yet. Paste the ATP DUPR Session Firebase settings into firebase-config.js (see the setup guide). Add ?demo to the address to try the demo."; MODE="live"; render(); return;
+  }
+  if(cfg){
     try{ store=await firebaseStore(cfg); }catch(e){ configError="Couldn't load Firebase: "+e.message; render(); }
   } else {
     MODE="demo"; isHost=ls.get("dupr-demo-host")==="1"; store=localStore(); viewSid=SERIES?.current||null;
