@@ -1,0 +1,898 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ATP DUPR Session</title>
+<meta name="description" content="Courts, scores and standings for ATP Pickleball Club DUPR sessions.">
+<meta name="theme-color" content="#06122b">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600&display=swap">
+<style>
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+img{max-width:100%} [hidden]{display:none!important}
+
+/* Layout: night-court look shared with the club's interclub sites. Sticky header + tabs, court cards in a grid, host tools in one column. */
+:root{
+  --bg:#06122b; --surface:#0c1d40; --sunk:#132a57; --ink:#f4f7fc; --muted:#9db0d3; --line:#1f3869;
+  --atp:#5b93ff; --atp-soft:#122f6b; --lime:#cbe936; --on-lime:#071430; --gold:#f7c520; --gold-soft:#3a2f08;
+  --red:#ff6b5a; --red-soft:#3d1512; --up:#74d235; --up-soft:#163b16;
+  --display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --body:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --logo:url("data:image/webp;base64,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");
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45;margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--lime);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:12px;padding-block:10px 6px}
+.logo{width:38px;height:42px;flex:none;background:var(--logo) center/contain no-repeat;filter:drop-shadow(0 0 8px color-mix(in srgb,var(--atp) 50%,transparent))}
+.brand h1{font-family:var(--display);font-weight:800;font-size:24px;line-height:1;margin:0;letter-spacing:.01em;text-transform:uppercase}
+.brand .sub{color:var(--muted);font-size:13px}
+.brand .grow{flex:1;min-width:0}
+.pill{display:inline-flex;align-items:center;gap:6px;font-family:var(--display);font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:99px;background:var(--sunk);color:var(--muted);white-space:nowrap}
+.pill.live{background:var(--lime);color:var(--on-lime)}
+.pill.warn{background:var(--gold-soft);color:var(--gold)}
+.brandrow{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:5px}
+.hostlink{font-family:var(--display);font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding:3px 10px;border-radius:99px;border:1px solid var(--line);background:none;color:var(--muted);cursor:pointer}
+.hostlink.on{border-color:var(--lime);color:var(--lime)}
+.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.tabs button{background:none;border:0;border-bottom:3px solid transparent;padding:8px 9px 7px;font-family:var(--display);font-weight:700;font-size:15px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);cursor:pointer;white-space:nowrap}
+.tabs button[aria-current="true"]{color:var(--ink);border-color:var(--lime)}
+
+main{padding-block:16px 60px;display:grid;gap:16px}
+.banner{background:var(--gold-soft);color:var(--gold);border-radius:10px;padding:10px 14px;font-size:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.banner.info{background:var(--atp-soft);color:var(--ink)}
+.banner .grow{flex:1;min-width:200px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);background:var(--sunk);color:var(--ink);border-radius:8px;padding:8px 14px;font-family:var(--display);font-weight:700;font-size:16px;letter-spacing:.03em;text-transform:uppercase;cursor:pointer;min-height:40px}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--lime);color:var(--on-lime);border-color:var(--lime)}
+.btn.danger{background:var(--red-soft);color:var(--red);border-color:color-mix(in srgb,var(--red) 40%,transparent)}
+.btn.small{min-height:32px;padding:4px 10px;font-size:14px}
+.btn.ghost{background:none}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.seg{display:inline-flex;background:var(--sunk);border-radius:9px;padding:3px;gap:3px}
+.seg button{border:0;background:none;padding:6px 14px;border-radius:7px;font-family:var(--display);font-weight:700;font-size:15px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 0 0 1px var(--line)}
+.seg button:disabled{opacity:.4;cursor:not-allowed}
+
+input[type=text],input[type=search],input[type=email],input[type=password],input[type=number],input[type=date],select,textarea{background:var(--sunk);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-height:40px;width:100%}
+textarea{min-height:120px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
+label.f{display:grid;gap:4px;font-size:13px;color:var(--muted)}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.search{position:relative;flex:1;min-width:220px;max-width:420px}
+.search input{padding-left:34px}
+.search svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted)}
+
+.courts{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));align-items:start}
+.court{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.court.dim{opacity:.35}
+.court-h{display:flex;align-items:baseline;gap:10px;padding:12px 14px 8px;border-bottom:1px solid var(--line)}
+.court-h .num{font-family:var(--display);font-weight:800;font-size:30px;line-height:.9;color:var(--lime)}
+.court-h .lbl{font-family:var(--display);font-weight:700;font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.court-h .grow{flex:1}
+.plist{list-style:none;margin:0;padding:6px 8px;display:grid;gap:2px}
+.plist li{display:flex;align-items:center;gap:8px;padding:5px 6px;border-radius:7px}
+.plist li.me{background:var(--atp-soft);box-shadow:inset 3px 0 0 var(--atp)}
+.plist li.pick{background:var(--gold-soft);box-shadow:inset 3px 0 0 var(--gold)}
+.plist .seed{font-family:var(--display);font-weight:700;color:var(--muted);width:16px;text-align:right}
+.plist .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dupr{font-variant-numeric:tabular-nums;font-size:13px;color:var(--muted)}
+.plist button.swap{all:unset;cursor:pointer;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-decoration:underline dotted var(--muted)}
+.games{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.game{display:grid;grid-template-columns:26px 1fr auto;gap:10px;align-items:center;padding:9px 14px;border-bottom:1px solid var(--line)}
+.game:last-child{border-bottom:0}
+.game.me{background:color-mix(in srgb,var(--atp-soft) 60%,transparent)}
+.game .gno{font-family:var(--display);font-weight:700;color:var(--muted);font-size:14px}
+.teams{display:grid;gap:1px;font-size:14px;min-width:0}
+.teams .t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.teams .t.win{font-weight:600}
+.teams .t.lose{color:var(--muted)}
+.teams .sit{font-size:12px;color:var(--muted)}
+.score{display:grid;gap:1px;text-align:right;font-family:var(--display);font-weight:700;font-size:18px;font-variant-numeric:tabular-nums;line-height:1.15}
+.score .win{color:var(--lime)} .score .lose{color:var(--muted)}
+.lockrow{display:flex;align-items:center;gap:6px;justify-content:flex-end}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px}
+.card h2{font-family:var(--display);font-weight:800;font-size:22px;text-transform:uppercase;letter-spacing:.02em;margin:0 0 4px;text-wrap:balance}
+.card h3{font-family:var(--display);font-weight:700;font-size:17px;text-transform:uppercase;letter-spacing:.04em;margin:14px 0 6px;color:var(--muted)}
+.card p{margin:0 0 10px;color:var(--muted)}
+.card > * + .row{margin-top:10px}
+.hostgrid > div, .card{min-width:0}
+.plist2{display:grid;gap:8px;margin-top:10px;max-height:460px;overflow-y:auto;overflow-x:hidden;padding-right:2px}
+.prow{display:grid;gap:6px;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) minmax(0,.7fr) auto;align-items:center;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.prow input{min-height:36px;padding:5px 8px;min-width:0}
+.prow .pn{font-weight:600}
+@media (max-width:640px){.prow{grid-template-columns:minmax(0,1fr) minmax(0,.8fr) auto}.prow .pn{grid-column:1/-1}}
+.hostgrid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr));align-items:start}
+
+.tablewrap{overflow-x:auto;margin-inline:-4px}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{padding:7px 6px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-family:var(--display);font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+td.n,th.n{text-align:right}
+tr.me td{background:var(--atp-soft)}
+table.stand{table-layout:fixed}
+table.stand th:first-child{width:30px}
+table.stand th.n{width:48px}
+table.stand th.n,table.stand td.n{text-align:center;padding-inline:2px}
+table.stand th:last-child:not(.n){width:74px}
+table.stand th:last-child:not(.n),table.stand td:last-child:not(.n){text-align:center}
+table.stand td:nth-child(2){overflow:hidden;text-overflow:ellipsis}
+td input{min-height:34px;padding:4px 8px}
+.mv{font-family:var(--display);font-weight:700;font-size:13px;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:5px;white-space:nowrap}
+.mv.up{background:var(--up-soft);color:var(--up)} .mv.down{background:var(--red-soft);color:var(--red)} .mv.stay{background:var(--sunk);color:var(--muted)}
+.pos{font-family:var(--display);font-weight:800;font-size:17px}
+
+.checkin{display:grid;gap:6px;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));max-height:440px;overflow:auto;padding:2px}
+.chkrow{display:flex;gap:6px;align-items:stretch}
+.chkrow .chk{flex:1;min-width:0}
+.rin{width:76px!important;min-height:0!important;padding:4px 6px!important;text-align:center;font-variant-numeric:tabular-nums;flex:none}
+.chk{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:var(--sunk);cursor:pointer;text-align:left;width:100%}
+.chk[aria-pressed="true"]{background:var(--up-soft);border-color:var(--up)}
+.chk .box{width:20px;height:20px;border-radius:5px;border:2px solid var(--muted);flex:none;display:grid;place-items:center}
+.chk[aria-pressed="true"] .box{background:var(--up);border-color:var(--up);color:var(--on-lime)}
+.chk .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.plan{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.plan span{font-family:var(--display);font-weight:700;background:var(--sunk);border-radius:6px;padding:3px 8px;font-size:14px}
+.plan span b{color:var(--lime)}
+.grid2{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.empty{color:var(--muted);text-align:center;padding:40px 16px;border:1px dashed var(--line);border-radius:14px}
+.empty h2{font-family:var(--display);color:var(--ink);text-transform:uppercase;margin:0 0 6px}
+.hist{display:grid;gap:8px}
+.hrow{display:flex;gap:8px;align-items:stretch}
+.hrow .btn{align-self:center}
+.hist button[data-open]{all:unset;flex:1;min-width:0;cursor:pointer;display:flex;gap:12px;align-items:center;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.hist button[data-open]:hover{border-color:var(--muted)}
+.hist .d{font-family:var(--display);font-weight:800;font-size:20px;text-transform:uppercase;min-width:120px}
+.hist .grow{flex:1;color:var(--muted)}
+
+.modal-bg{position:fixed;inset:0;z-index:50;background:rgba(2,8,20,.72);display:grid;place-items:center;padding:16px}
+.modal{background:var(--surface);border:1px solid var(--line);border-radius:16px;width:min(100%,460px);max-height:calc(100% - 20px);overflow:auto;padding:18px}
+.modal.wide{width:min(100%,720px)}
+.modal h2{font-family:var(--display);font-weight:800;font-size:22px;text-transform:uppercase;margin:0 0 2px}
+.modal .muted{color:var(--muted);font-size:14px;margin:0 0 14px}
+.sc{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:12px;border-radius:12px;background:var(--sunk);margin-bottom:8px}
+.sc.win{box-shadow:inset 0 0 0 2px var(--lime)}
+.sc .who{font-weight:600;min-width:0}
+.sc .who small{display:block;color:var(--muted);font-weight:400}
+.stepper{display:flex;align-items:center;gap:6px}
+.stepper button{width:44px;height:44px;border-radius:10px;border:1px solid var(--line);background:var(--surface);font-size:24px;line-height:1;cursor:pointer}
+.stepper input{width:64px;text-align:center;font-family:var(--display);font-weight:800;font-size:28px;min-height:44px;padding:2px}
+.msg{font-size:14px;min-height:20px;margin:6px 0 10px;color:var(--muted)}
+.msg.bad{color:var(--red)} .msg.ok{color:var(--lime)}
+.confirm{background:var(--gold-soft);color:var(--gold);border-radius:10px;padding:12px;margin-bottom:12px;font-size:15px}
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;background:var(--lime);color:var(--on-lime);font-weight:600;padding:10px 16px;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,.4);max-width:calc(100% - 32px)}
+footer{color:var(--muted);font-size:13px;text-align:center;padding-block:10px 30px}
+@media (max-width:520px){.brand h1{font-size:21px}.court-h .num{font-size:26px}}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+<div id="modal"></div>
+<div id="toast" hidden class="toast"></div>
+
+<script type="module">
+/* ======================================================================
+   ATP DUPR Session
+   - Runs live with Firebase when firebase-config.js is beside this file.
+   - Without it (or with ?demo in the address) it runs as a demo in this
+     browser only, with sample players.
+   ====================================================================== */
+
+const $ = (s,el=document)=>el.querySelector(s);
+const esc = s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const clone = o=>JSON.parse(JSON.stringify(o));
+const ls = {get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+const uid = ()=>"p"+Math.random().toString(36).slice(2,9);
+
+/* ----- Game rotations -----
+   5 on a court: 5 games, everyone sits once and partners each other player once.
+   4 on a court: 3 games, everyone partners each other player once.
+   Numbers are seed positions on the court (0 = highest DUPR). */
+const ROT = {
+  5: [[[0,1],[2,3],4],[[1,2],[3,4],0],[[0,2],[1,4],3],[[0,3],[2,4],1],[[0,4],[1,3],2]],
+  4: [[[0,1],[2,3],null],[[0,2],[1,3],null],[[0,3],[1,2],null]]
+};
+
+const SERIES_DEFAULT = {
+  name:"DUPR Session", venue:"Jonas Bradley Park", day:"", start:"",
+  maxCourts:6, target:11, winBy:2, players:{}, sessions:{}, current:null
+};
+
+/* ---------- state ---------- */
+let MODE="loading", SERIES=null, SESS=null, viewSid=null;
+let isHost=false, userEmail=null, hostReason="", showLogin=false, loginMsg="";
+let tab = ls.get("ladder-tab")||"courts";
+let roundView=null, me = ls.get("ladder-me")||"", search="", hostSearch="", swapPick=null, swapMode=false;
+let modal=null, pendingRender=false, configError="";
+let store=null;
+
+/* ---------- helpers ---------- */
+const fmtDate = iso=>{ if(!iso) return ""; const [y,m,d]=iso.split("-").map(Number); return new Date(y,m-1,d).toLocaleDateString("en-AU",{weekday:"short",day:"numeric",month:"short",year:"numeric"}); };
+const shortDate = iso=>{ if(!iso) return ""; const [y,m,d]=iso.split("-").map(Number); return new Date(y,m-1,d).toLocaleDateString("en-AU",{weekday:"short",day:"numeric",month:"short"}); };
+const todayISO = ()=>{ const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; };
+function nextSessionDate(){
+  const day = SERIES?.day===""||SERIES?.day==null ? null : +SERIES.day;
+  const d=new Date(); if(day!=null){ while(d.getDay()!==day) d.setDate(d.getDate()+1); }
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+const rating = r=> (r==null||r===""||isNaN(r)) ? "—" : Number(r).toFixed(3);
+const pName = (s,pid)=> s?.players?.[pid]?.name || SERIES?.players?.[pid]?.name || "Unknown";
+function toast(t){ const el=$("#toast"); el.textContent=t; el.hidden=false; clearTimeout(toast.t); toast.t=setTimeout(()=>el.hidden=true,2600); }
+
+/* Court plan: as many courts as needed (max set by host), 4 or 5 per court, full courts at the top. */
+function courtPlan(n, max){
+  if(n<4) return {ok:false, why:`Need at least 4 players (${n} checked in).`};
+  const c=Math.ceil(n/5);
+  if(c>max) return {ok:false, why:`${n} players needs ${c} courts but the maximum is ${max}. Untick ${n-max*5} or raise the court limit in Settings.`};
+  if(c*4>n) return {ok:false, why:`${n} players can't be split into courts of 4 or 5. Add or remove one player.`};
+  const fives=n-c*4, sizes=Array.from({length:c},(_,i)=>i<fives?5:4);
+  return {ok:true, sizes};
+}
+
+function validRating(r){ return Number.isFinite(r) && r>=1 && r<=8; }
+
+function validScore(a,b,target,winBy){
+  if(!Number.isInteger(a)||!Number.isInteger(b)||a<0||b<0) return "Enter both scores.";
+  if(a===b) return "Scores can't be level.";
+  const w=Math.max(a,b), l=Math.min(a,b);
+  if(w<target) return `The winner needs at least ${target}.`;
+  if(w-l<winBy) return `Must win by ${winBy}.`;
+  if(w>target && w-l!==winBy) return `Past ${target}, the game ends as soon as one team is ${winBy} ahead (e.g. ${w}–${w-winBy}).`;
+  return "";
+}
+
+const gkey = (r,ci,gi)=>`r${r}_c${ci+1}_g${gi+1}`;
+function gamesFor(court){ return (ROT[court.length]||[]).map(([a,b,sit])=>({a:a.map(i=>court[i]),b:b.map(i=>court[i]),sit:sit==null?null:court[sit]})); }
+
+/* Standings on one court for one round. Order: wins, then points difference, then points won, then DUPR. */
+function courtStandings(s, r, ci){
+  const court=courtsOf(s,r)[ci]||[];
+  const st={}; court.forEach(p=>st[p]={pid:p,w:0,l:0,pf:0,pa:0,gp:0});
+  gamesFor(court).forEach((g,gi)=>{
+    const sc=s.scores?.[gkey(r,ci,gi)]; if(!sc) return;
+    const aw=sc.a>sc.b;
+    g.a.forEach(p=>{const x=st[p];x.gp++;x.pf+=sc.a;x.pa+=sc.b;aw?x.w++:x.l++;});
+    g.b.forEach(p=>{const x=st[p];x.gp++;x.pf+=sc.b;x.pa+=sc.a;aw?x.l++:x.w++;});
+  });
+  const rt=p=>Number(s.players?.[p]?.rating)||0;
+  return Object.values(st).sort((x,y)=>y.w-x.w||(y.pf-y.pa)-(x.pf-x.pa)||y.pf-x.pf||rt(y.pid)-rt(x.pid)||pName(s,x.pid).localeCompare(pName(s,y.pid)));
+}
+function roundComplete(s,r){
+  const cs=courtsOf(s,r); let total=0,done=0;
+  cs.forEach((c,ci)=>{ if(!c){ total+=(ROT[s.courts.r1[ci].length]||[]).length; return; }
+    gamesFor(c).forEach((g,gi)=>{total++; if(s.scores?.[gkey(r,ci,gi)]) done++;}); });
+  return {total,done,complete:total>0&&done===total};
+}
+/* Round 2 runs court by court. Round 2 court k needs the middle players of Round 1 court k, the top 2 from
+   the court below and the bottom 2 from the court above, so it opens as soon as those Round 1 courts finish. */
+const r1Done=(s,ci)=>{ const c=s.courts?.r1?.[ci]; return !c || gamesFor(c).every((g,gi)=>s.scores?.[gkey(1,ci,gi)]); };
+const feeders=(s,k)=>{ const n=s.courts?.r1?.length||0, out=[]; for(let i=Math.max(0,k-1);i<=Math.min(n-1,k+1);i++) out.push(i); return out; };
+const r2Ready=(s,k)=>feeders(s,k).every(i=>r1Done(s,i));
+const r2Started=(s,k)=>Object.keys(s.scores||{}).some(x=>x.startsWith(`r2_c${k+1}_`));
+function r2Derived(s,k){
+  const cs=s.courts.r1, n=cs.length, rk=i=>courtStandings(s,1,i).map(x=>x.pid);
+  const L=rk(k), sz=L.length; let next=L.slice(2,sz-2);
+  if(k===0) next=[...L.slice(0,2),...next]; else { const A=rk(k-1); next=[...next,...A.slice(A.length-2)]; }
+  if(k===n-1) next=[...next,...L.slice(sz-2)]; else next=[...next,...rk(k+1).slice(0,2)];
+  const rt=p=>Number(s.players?.[p]?.rating)||0;
+  return next.sort((a,b)=>rt(b)-rt(a));
+}
+function courtsOf(s,r){
+  if(r===1) return s.courts?.r1||[];
+  const n=s.courts?.r1?.length||0;
+  return Array.from({length:n},(_,k)=> s.courts?.r2?.[k] || (r2Ready(s,k)?r2Derived(s,k):null));
+}
+/* Top 2 up a court, bottom 2 down, the rest stay. Court 1 keeps its top 2; the last court keeps its bottom 2. */
+function moveForRound2(s){ return (s.courts.r1||[]).map((c,k)=>r2Derived(s,k)); }
+function movement(s,ci,pos,size){
+  const n=s.courts.r1.length;
+  if(pos<2) return ci===0?["stay","Stays"]:["up","Up"];
+  if(pos>=size-2) return ci===n-1?["stay","Stays"]:["down","Down"];
+  return ["stay","Stays"];
+}
+function finalLadder(s){
+  const out=[]; const r2=courtsOf(s,2);
+  r2.forEach((c,ci)=>{ if(c) courtStandings(s,2,ci).forEach(x=>{
+    const t={w:0,l:0,pf:0,pa:0};
+    [1,2].forEach(r=>courtsOf(s,r).forEach((cc,cj)=>{ if(!cc||!cc.includes(x.pid))return; const y=courtStandings(s,r,cj).find(z=>z.pid===x.pid); t.w+=y.w;t.l+=y.l;t.pf+=y.pf;t.pa+=y.pa; }));
+    out.push({pid:x.pid,court:ci+1,r2:x,tot:t});
+  }); });
+  return out;
+}
+const curRound = s=> s?.status==="done" ? 2 : (s?.courts?.r1 && courtsOf(s,2).some(Boolean)) ? 2 : 1;
+const playing = s=> s?.status==="r1"||s?.status==="r2";
+
+/* ======================================================================
+   Storage: demo (this browser) or Firebase (live)
+   ====================================================================== */
+function demoSeed(){
+  const names=["Alex Morgan","Priya Shah","Ben Carter","Mia Nguyen","Tom Walsh","Grace Lee","Sam Patel","Chloe Martin","Jack Wilson","Ella Brown","Noah Kim","Ruby Taylor","Liam O'Brien","Zara Ahmed","Ethan Clarke","Isla Robinson","Josh Fraser","Olivia Hart","Ryan Dunn","Sophie Grant","Dan Mitchell","Hannah Lowe","Marcus Reid","Lily Chen","Owen Price","Amy Fischer","Nick Bell","Jess Moore","Chris Ward","Kate Hill","Matt Young","Sarah Cole"];
+  const series=clone(SERIES_DEFAULT); series.day="3"; series.start="18:30";
+  const base={}; names.forEach((n,i)=>{ base["d"+(i+1)]={name:n,dupr:"DEMO"+(101+i),rating:+(5.1-i*0.075+((i*37)%7)*0.01).toFixed(3)}; });
+  const ids=Object.keys(base);
+  // last week: 30 players, finished
+  const lw=new Date(); lw.setDate(lw.getDate()-7);
+  const lwISO=`${lw.getFullYear()}-${String(lw.getMonth()+1).padStart(2,"0")}-${String(lw.getDate()).padStart(2,"0")}`;
+  const past={id:"s-"+lwISO,date:lwISO,status:"checkin",roster:Object.fromEntries(ids.slice(0,30).map(k=>[k,clone(base[k])])),here:ids.slice(0,30),players:{},courts:{},scores:{},target:11,winBy:2};
+  makeRound1(past,series);
+  let n=0; const fill=r=>past.courts["r"+r].forEach((c,ci)=>gamesFor(c).forEach((g,gi)=>{ n++; const l=(n*53)%10; past.scores[gkey(r,ci,gi)]=(n%3)?{a:11,b:l}:{a:l,b:11}; }));
+  fill(1); past.courts.r2=moveForRound2(past); past.status="r2"; fill(2); past.status="done";
+  // today: 30 checked in from the OpenSports list with this week's ratings, Round 1 under way
+  const wk=[...ids.slice(0,26),...ids.slice(28,32)], roster={};
+  wk.forEach((id,i)=>{ const p=clone(base[id]); p.rating=+(p.rating+(((i*29)%9)-4)*0.012).toFixed(3); roster[id]=p; });
+  const sid="s-"+todayISO();
+  const sess={id:sid,date:todayISO(),status:"checkin",roster,here:[...wk],players:{},courts:{},scores:{},target:11,winBy:2};
+  makeRound1(sess,series);
+  sess.courts.r1.forEach((c,ci)=>gamesFor(c).forEach((g,gi)=>{ if(ci===3||(ci<3&&gi>1)) return; const l=((ci*5+gi+1)*53)%9; sess.scores[gkey(1,ci,gi)]=((ci+gi)%3)?{a:11,b:l}:{a:l,b:11}; }));
+  series.sessions[past.id]={date:past.date,status:"done",count:30};
+  series.sessions[sid]={date:sess.date,status:"r1",count:30};
+  series.current=sid;
+  return {series,sess:{[sid]:sess,[past.id]:past}};
+}
+function makeRound1(sess, series){
+  const plan=courtPlan(sess.here.length, +series.maxCourts||6); if(!plan.ok) return plan;
+  sess.players={}; sess.here.forEach(p=>{const x=sess.roster?.[p]||{name:"Unknown"}; sess.players[p]={name:x.name,dupr:x.dupr||"",rating:x.rating??null};});
+  const sorted=[...sess.here].sort((a,b)=>(Number(sess.players[b].rating)||0)-(Number(sess.players[a].rating)||0)||sess.players[a].name.localeCompare(sess.players[b].name));
+  const courts=[]; let k=0; plan.sizes.forEach(sz=>{courts.push(sorted.slice(k,k+sz)); k+=sz;});
+  sess.courts={r1:courts}; sess.scores={}; sess.status="r1"; sess.target=+series.target||11; sess.winBy=+series.winBy||2;
+  return plan;
+}
+
+const DEMO_KEY="atp-dupr-demo-v6";
+function localStore(){
+  let db=null; try{db=JSON.parse(ls.get(DEMO_KEY)||"null")}catch(e){}
+  if(!db||!db.series) db=demoSeed();
+  const persist=()=>ls.set(DEMO_KEY,JSON.stringify(db));
+  persist();
+  let watchSid=null;
+  const push=()=>{ SERIES=clone(db.series); SESS=watchSid&&db.sess[watchSid]?clone(db.sess[watchSid]):null; scheduleRender(); };
+  window.addEventListener("storage",e=>{ if(e.key===DEMO_KEY){ try{db=JSON.parse(e.newValue)}catch(_){} push(); } });
+  return {
+    kind:"demo",
+    watch(sid){ watchSid=sid; push(); },
+    async saveSeries(x){ db.series=clone(x); persist(); push(); },
+    async saveSession(x){ db.sess[x.id]=clone(x); persist(); push(); },
+    async submitScore(sid,k,v){ const s=db.sess[sid]; if(s.scores[k]) throw {code:"taken"}; s.scores[k]=v; persist(); push(); },
+    async hostScore(sid,k,v){ const s=db.sess[sid]; if(v) s.scores[k]=v; else delete s.scores[k]; persist(); push(); },
+    async getSession(sid){ return clone(db.sess[sid]||null); },
+    reset(){ db=demoSeed(); persist(); viewSid=db.series.current; this.watch(viewSid); }
+  };
+}
+
+function packCourts(x){ const y=clone(x); if(y.courts) for(const r of Object.keys(y.courts)){ const arr=y.courts[r]; if(Array.isArray(arr)){ const o={n:arr.length}; arr.forEach((c,i)=>{ if(c) o["c"+i]=c; }); y.courts[r]=o; } } return y; }
+function unpackCourts(x){ if(x?.courts) for(const r of Object.keys(x.courts)){ const o=x.courts[r]; if(o&&!Array.isArray(o)) x.courts[r]=Array.from({length:o.n||0},(_,i)=>o["c"+i]||null); } return x; }
+async function firebaseStore(cfg){
+  const V="10.12.2", base=`https://www.gstatic.com/firebasejs/${V}/`;
+  const [{initializeApp},F,A]=await Promise.all([import(base+"firebase-app.js"),import(base+"firebase-firestore.js"),import(base+"firebase-auth.js")]);
+  const app=initializeApp(cfg.firebaseConfig), db=F.getFirestore(app), auth=A.getAuth(app);
+  const COL=cfg.SESSION_COLLECTION||"duprsession";
+  const seriesRef=F.doc(db,COL,"series");
+  let unSess=null, watchSid=null;
+  F.onSnapshot(seriesRef,snap=>{
+    const prevCurrent=SERIES?.current;
+    SERIES=snap.exists()?{...clone(SERIES_DEFAULT),...snap.data()}:null;
+    if(SERIES && SERIES.current && (!viewSid || viewSid===prevCurrent) && viewSid!==SERIES.current){ viewSid=SERIES.current; roundView=null; store.watch(viewSid); }
+    MODE="live"; scheduleRender();
+  },err=>{configError="Couldn't read the sessions from Firebase ("+(err.code||err.message)+"). Check the Firestore rules are published.";scheduleRender();});
+  A.onAuthStateChanged(auth,async u=>{
+    userEmail=u?.email||null; isHost=false; hostReason="";
+    if(u){ try{ const c=await F.getDoc(F.doc(db,"config","committee"));
+        const list=(c.data()?.emails||[]).map(x=>String(x).trim().toLowerCase());
+        isHost=list.includes(u.email.toLowerCase());
+        if(!isHost) hostReason=`${u.email} isn't on the committee list (Firebase → config → committee → emails).`;
+      }catch(e){ hostReason="Couldn't check the committee list. Check the Firestore rules are published."; } }
+    scheduleRender();
+  });
+  return {
+    kind:"live", auth, A,
+    watch(sid){
+      if(sid===watchSid) return; watchSid=sid; if(unSess){unSess();unSess=null;} SESS=null;
+      if(!sid){scheduleRender();return}
+      unSess=F.onSnapshot(F.doc(db,COL,sid),snap=>{SESS=snap.exists()?unpackCourts(snap.data()):null;scheduleRender();});
+    },
+    saveSeries:x=>F.setDoc(seriesRef,clone(x)),
+    saveSession:x=>F.setDoc(F.doc(db,COL,x.id),packCourts(x)),
+    submitScore:async(sid,k,v)=>{
+      try{ await F.updateDoc(F.doc(db,COL,sid),new F.FieldPath("scores",k),v); }
+      catch(e){ throw {code:e.code==="permission-denied"?"taken":e.code}; }
+    },
+    hostScore:(sid,k,v)=>F.updateDoc(F.doc(db,COL,sid),new F.FieldPath("scores",k),v?v:F.deleteField()),
+    getSession:async sid=>{const d=await F.getDoc(F.doc(db,COL,sid)); return d.exists()?unpackCourts(d.data()):null;}
+  };
+}
+
+/* ======================================================================
+   Rendering
+   ====================================================================== */
+function typingInForm(){ const a=document.activeElement; return a && a.matches?.("input[data-keep],textarea,select") ; }
+function scheduleRender(){ if(typingInForm()){pendingRender=true;return} pendingRender=false; render(); }
+document.addEventListener("focusout",()=>{ if(!pendingRender)return; setTimeout(()=>{ if(!typingInForm()){pendingRender=false;render()} },0); });
+
+function render(){
+  const a=document.activeElement, fid=a?.id, sel=[a?.selectionStart,a?.selectionEnd];
+  $("#app").innerHTML=view();
+  if(fid){ const el=document.getElementById(fid); if(el){ el.focus(); try{ if(sel[0]!=null) el.setSelectionRange(sel[0],sel[1]); }catch(e){} } }
+  renderModal();
+}
+
+function header(){
+  const s=SESS, st=s?.status;
+  const status = !s ? "" : st==="checkin"?`<span class="pill warn">Check-in</span>`:st==="done"?`<span class="pill">Final</span>`:(()=>{ const o=courtsOf(s,2).filter(Boolean).length, n=s.courts?.r1?.length||0; return o===0?`<span class="pill live">Round 1 live</span>`:o===n?`<span class="pill live">Round 2 live</span>`:`<span class="pill live">Round 2 · ${o}/${n} courts</span>`; })();
+  const tabs=[["courts","Courts"],["standings","Standings"],["history","History"]];
+  if(isHost) tabs.push(["host","Host"]);
+  return `<header class="top"><div class="wrap">
+    <div class="brand"><div class="logo" role="img" aria-label="ATP Pickleball Club"></div>
+      <div class="grow"><h1>ATP ${esc(SERIES?.name||"DUPR Session")}</h1>
+      <div class="sub">${s?esc(fmtDate(s.date)):""}${SERIES?.venue?" · "+esc(SERIES.venue):""}</div><div class="brandrow">${status}<button class="hostlink ${isHost?"on":""}" data-act="${isHost?"logout":"showLogin"}">${isHost?"Host · Log out":"Host login"}</button></div></div>
+</div>
+    <nav class="tabs" aria-label="Sections">${tabs.map(([k,l])=>`<button data-tab="${k}" aria-current="${tab===k}">${l}</button>`).join("")}</nav>
+  </div></header>`;
+}
+
+function view(){
+  if(configError) return header()+`<main class="wrap"><div class="banner">${esc(configError)}</div></main>`;
+  if(MODE==="loading") return `<main class="wrap"><div class="empty"><h2>Loading…</h2></div></main>`;
+  if(tab==="host"&&!isHost) tab="courts";
+  let body="";
+  const banners=[];
+  if(MODE==="demo") banners.push(`<div class="banner info"><span class="grow"><b>Demo mode.</b> Sample players, saved only in this browser. 30 checked in from an OpenSports list. Courts 5 and 6 have finished Round 1, so Round 2 Court 6 is already open. Last week's session is under History. Tap Host login (under the title) with the password <b>demo</b>.</span><button class="btn small" data-act="demoReset">Reset demo</button></div>`);
+  if(SESS && SERIES && viewSid!==SERIES.current) banners.push(`<div class="banner"><span class="grow">Viewing a past session: ${esc(fmtDate(SESS.date))}.</span><button class="btn small" data-act="toCurrent">Back to current session</button></div>`);
+  if(!SERIES){
+    body = isHost ? `<div class="empty"><h2>Set up DUPR Sessions</h2><p>This sets up the player list and settings. You only do this once.</p><button class="btn primary" data-act="createSeries">Set it up</button></div>`
+      : `<div class="empty"><h2>Not set up yet</h2><p>A committee member needs to log in and create it.</p>${hostLoginCard()}</div>`;
+  } else if(tab==="courts") body=courtsView();
+  else if(tab==="standings") body=standingsView();
+  else if(tab==="history") body=historyView();
+  else if(tab==="host") body=hostView();
+  return header()+`<main class="wrap">${banners.join("")}${body}</main>
+   <footer class="wrap">ATP Pickleball Club · Games to ${SESS?.target||SERIES?.target||11}, win by ${SESS?.winBy||SERIES?.winBy||2}, rally scoring
+   ${MODE==="live"&&userEmail?` · Logged in as ${esc(userEmail)}`:""}</footer>`;
+}
+
+const searchIcon=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>`;
+const lockIcon=`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>`;
+
+function noSession(){
+  return `<div class="empty"><h2>No session running</h2><p>Courts appear here once the host has checked everyone in.</p></div>`;
+}
+
+function courtsView(){
+  const s=SESS; if(!s) return noSession();
+  if(s.status==="checkin"){ const names=(s.here||[]).map(id=>s.roster?.[id]?.name).filter(Boolean).sort((a,b)=>a.localeCompare(b));
+    return `<div class="empty"><h2>Check-in under way</h2><p>${names.length} players checked in. Courts appear here when the host makes them.</p>${names.length?`<p style="max-width:560px;margin:10px auto 0">${names.map(esc).join(" · ")}</p>`:""}</div>`; }
+  const q=search.trim().toLowerCase();
+  const matchPid = q? Object.keys(s.players).filter(p=>s.players[p].name.toLowerCase().includes(q)) : [];
+  const focusPid = matchPid.length===1?matchPid[0]:(me&&s.players[me]?me:null);
+  const r2c=courtsOf(s,2), r2open=r2c.filter(Boolean).length;
+  let r = roundView;
+  if(r===2 && !r2open) r=1;
+  if(!r){ // default: Round 2 once this player's Round 2 court is open (or all of Round 1 is done)
+    const f1=focusPid?s.courts.r1.findIndex(c=>c.includes(focusPid)):-1;
+    r = (f1>=0 && r1Done(s,f1) && r2c.some(c=>c&&c.includes(focusPid))) || roundComplete(s,1).complete || s.status==="done" ? 2 : 1;
+    if(r===2 && !r2open) r=1;
+  }
+  const courts=courtsOf(s,r);
+  const live = playing(s);
+  const canSwap = isHostLike() && live && swapMode;
+  const prog=roundComplete(s,r);
+  let html=`<div class="toolbar">
+    <div class="seg" role="group" aria-label="Round">
+      <button data-round="1" aria-pressed="${r===1}">Round 1</button>
+      <button data-round="2" aria-pressed="${r===2}" ${r2open?"":"disabled"}>Round 2${r2open&&r2open<courts.length?` · ${r2open}/${courts.length}`:""}</button></div>
+    <label class="search">${searchIcon}<input id="q" type="search" placeholder="Find your name" value="${esc(search)}" autocomplete="off" aria-label="Find your name"></label>
+    <span class="pill">${prog.done}/${prog.total} games in</span>
+  </div>`;
+  if(q && matchPid.length===0) html+=`<div class="banner">No one called “${esc(search)}” is playing in this session.</div>`;
+  if(q && matchPid.length===1) html+=`<div class="row"><button class="btn small" data-pickme="${matchPid[0]}">That's me, remember it</button></div>`;
+  if(q && matchPid.length>1) html+=`<div class="row">${matchPid.slice(0,8).map(p=>`<button class="btn small" data-pickme="${p}">${esc(s.players[p].name)}</button>`).join("")}</div>`;
+  if(focusPid && !q) html+=`<div class="banner info"><span class="grow">Showing <b>${esc(s.players[focusPid].name)}</b> first.</span><button class="btn small" data-act="clearMe">Show all courts</button></div>`;
+  if(r===1 && live && !roundComplete(s,1).complete) html+=`<p class="dupr" style="margin:0">Each Round 2 court opens by itself as soon as the Round 1 courts next to it finish${r2open?` (${r2open} open so far)`:""}.</p>`;
+  if(isHostLike() && live) html+=`<div class="row"><button class="btn small ${swapMode?"primary":""}" data-act="swapMode">${swapMode?"Done swapping":"Swap players"}</button>${swapMode?`<span class="dupr">Tap one player, then another, to swap them. Courts that have started (a score is in) are locked.</span>`:""}</div>`;
+
+  let order=courts.map((c,i)=>i);
+  if(focusPid){ const fi=courts.findIndex(c=>c&&c.includes(focusPid)); if(fi>=0) order=[fi,...order.filter(i=>i!==fi)]; }
+  html+=`<div class="courts">${order.map(ci=>courtCard(s,r,ci,focusPid,live,canSwap, q && matchPid.length>0 && !(courts[ci]||[]).some(p=>matchPid.includes(p)))).join("")}</div>`;
+  return html;
+}
+function isHostLike(){ return isHost; }
+
+function courtCard(s,r,ci,focusPid,live,canSwap,dim){
+  const all=courtsOf(s,r), court=all[ci], n=all.length;
+  const lbl = ci===0?"Top court":ci===n-1?"Bottom court":"";
+  if(!court){ const wait=feeders(s,ci).filter(i=>!r1Done(s,i)).map(i=>i+1);
+    return `<section class="court ${dim?"dim":""}" aria-label="Court ${ci+1}"><div class="court-h"><span class="num">${ci+1}</span><span class="lbl">Court ${ci+1}${lbl?" · "+lbl:""}</span><span class="grow"></span><span class="pill warn">Waiting</span></div>
+      <p class="dupr" style="padding:14px;margin:0">Opens when Round 1 finishes on Court ${wait.join(" & ")}.</p></section>`; }
+  const games=gamesFor(court);
+  const hasScores=games.some((g,gi)=>s.scores?.[gkey(r,ci,gi)]);
+  return `<section class="court ${dim?"dim":""}" aria-label="Court ${ci+1}">
+    <div class="court-h"><span class="num">${ci+1}</span><span class="lbl">Court ${ci+1}${lbl?" · "+lbl:""}</span><span class="grow"></span>${canSwap&&hasScores?`<span class="pill">Started · no swaps</span>`:`<span class="dupr">${court.length} players</span>`}</div>
+    <ol class="plist">${court.map((p,i)=>`<li class="${p===focusPid?"me":""} ${swapPick?.pid===p?"pick":""}"><span class="seed">${i+1}</span>
+      ${canSwap&&!hasScores?`<button class="swap" data-swap="${p}" data-ci="${ci}" data-r="${r}">${esc(pName(s,p))}</button>`:`<span class="nm">${esc(pName(s,p))}</span>`}
+      <span class="dupr">${rating(s.players[p]?.rating)}</span></li>`).join("")}</ol>
+    <ul class="games">${games.map((g,gi)=>gameRow(s,r,ci,gi,g,focusPid,live)).join("")}</ul>
+  </section>`;
+}
+function gameRow(s,r,ci,gi,g,focusPid,live){
+  const k=gkey(r,ci,gi), sc=s.scores?.[k];
+  const tA=g.a.map(p=>esc(pName(s,p))).join(" & "), tB=g.b.map(p=>esc(pName(s,p))).join(" & ");
+  const mine=focusPid&&(g.a.includes(focusPid)||g.b.includes(focusPid));
+  const aw=sc&&sc.a>sc.b;
+  let right;
+  if(sc){ right=`<div class="score"><span class="${aw?"win":"lose"}">${sc.a}</span><span class="${aw?"lose":"win"}">${sc.b}</span></div>`;
+    const fedStarted = r===1 && [ci-1,ci,ci+1].some(k=>k>=0&&r2Started(s,k));
+    right=`<div class="lockrow">${isHostLike()&&s.status!=="done"&&!fedStarted?`<button class="btn small ghost" data-edit="${k}" data-ci="${ci}" data-gi="${gi}" data-r="${r}" title="Change score">Edit</button>`:`<span class="dupr" title="Locked">${lockIcon}</span>`}${right}</div>`; }
+  else if(live) right=`<button class="btn small primary" data-enter="${k}" data-ci="${ci}" data-gi="${gi}" data-r="${r}">Enter score</button>`;
+  else right=`<span class="dupr">—</span>`;
+  return `<li class="game ${mine?"me":""}"><span class="gno">G${gi+1}</span>
+    <div class="teams"><span class="t ${sc?(aw?"win":"lose"):""}">${tA}</span><span class="t ${sc?(aw?"lose":"win"):""}">${tB}</span>
+    ${g.sit?`<span class="sit">Sits out: ${esc(pName(s,g.sit))}</span>`:""}</div>${right}</li>`;
+}
+
+function standingsView(){
+  const s=SESS; if(!s) return noSession();
+  if(s.status==="checkin") return `<div class="empty"><h2>No games yet</h2><p>Standings appear once Round 1 starts.</p></div>`;
+  const r=1;
+  let html=`<div class="toolbar"><h2 style="font-family:var(--display);font-weight:800;text-transform:uppercase;margin:0;font-size:22px">Round 1</h2>
+      <span class="dupr">Ranked by wins, then points difference, then points won. Top 2 move up, bottom 2 move down for Round 2.</span></div>`;
+  html+=`<div class="courts">${(s.courts["r"+r]||[]).map((c,ci)=>{
+    const rows=courtStandings(s,r,ci);
+    return `<section class="court"><div class="court-h"><span class="num">${ci+1}</span><span class="lbl">Court ${ci+1}</span></div>
+     <div class="tablewrap"><table class="stand"><thead><tr><th>#</th><th>Player</th><th class="n">W</th><th class="n">L</th><th class="n">+/−</th>${r===1&&r1Done(s,ci)?"<th>Next</th>":""}</tr></thead><tbody>
+     ${rows.map((x,i)=>{const d=x.pf-x.pa; const mv=r===1&&r1Done(s,ci)?movement(s,ci,i,rows.length):null;
+       return `<tr class="${x.pid===me?"me":""}"><td class="pos">${i+1}</td><td>${esc(pName(s,x.pid))}</td><td class="n">${x.w}</td><td class="n">${x.l}</td><td class="n">${d>0?"+":""}${d}</td>${mv?`<td><span class="mv ${mv[0]}">${mv[1]}</span></td>`:""}</tr>`}).join("")}
+     </tbody></table></div></section>`}).join("")}</div>`;
+  if(r===1 && playing(s)) html+=`<p class="dupr">“Next” (up, down or stays) appears on each court once all its Round 1 games are in.</p>`;
+  return html;
+}
+function finalTable(s){
+  const L=finalLadder(s);
+  return `<section class="card"><h2>Final standings</h2><p>Finishing order: Round 2 court first, then place on that court.</p>
+   <div class="tablewrap"><table><thead><tr><th>#</th><th>Player</th><th class="n">Court</th><th class="n">W–L (session)</th><th class="n">+/− (session)</th><th class="n">DUPR</th></tr></thead><tbody>
+   ${L.map((x,i)=>{const d=x.tot.pf-x.tot.pa;return `<tr class="${x.pid===me?"me":""}"><td class="pos">${i+1}</td><td>${esc(pName(s,x.pid))}</td><td class="n">${x.court}</td><td class="n">${x.tot.w}–${x.tot.l}</td><td class="n">${d>0?"+":""}${d}</td><td class="n dupr">${rating(s.players[x.pid]?.rating)}</td></tr>`}).join("")}
+   </tbody></table></div></section>`;
+}
+
+function historyView(){
+  const list=Object.entries(SERIES.sessions||{}).sort((a,b)=>b[1].date.localeCompare(a[1].date)||b[0].localeCompare(a[0]));
+  if(!list.length) return `<div class="empty"><h2>No sessions yet</h2><p>Every session is kept here once it's run.</p></div>`;
+  return `<div class="hist">${list.map(([id,x])=>`<div class="hrow"><button data-open="${id}"><span class="d">${esc(shortDate(x.date))}</span><span class="grow">${x.count||0} players · ${x.status==="done"?"Final":x.status==="checkin"?"Check-in":"In progress"}</span>${id===SERIES.current?`<span class="pill live">Current</span>`:""}</button>${isHostLike()&&x.status!=="checkin"?`<button class="btn small" data-csv="${id}" title="Results CSV for DUPR">CSV</button>`:""}</div>`).join("")}</div>`;
+}
+
+/* ---------- host ---------- */
+function hostLoginCard(){
+  if(MODE!=="live") return "";
+  if(userEmail&&!isHost) return `<div class="banner">${esc(hostReason)}</div>`;
+  if(!showLogin) return `<div class="row" style="justify-content:center;margin-top:10px"><button class="btn primary" data-act="showLogin">Committee login</button></div>`;
+  return "";
+}
+function hostView(){
+  const s=SESS;
+  const viewingPast = s && viewSid!==SERIES.current;
+  let left="", right="";
+  // session controls
+  if(!s || viewingPast){
+    left+=`<section class="card"><h2>${viewingPast?"Past session":"Start a session"}</h2>
+      ${viewingPast?`<p>You're looking at ${esc(fmtDate(s.date))}. Go back to the current session to run it.</p><div class="row"><button class="btn" data-act="toCurrent">Back to current session</button></div>`:
+      `<p>Start check-in, then load this week's OpenSports list. Everyone on it is checked in with their current DUPR rating; untick anyone who doesn't turn up.</p>
+      <div class="row"><label class="f" style="min-width:180px">Date<input id="newDate" type="date" value="${nextSessionDate()}"></label></div>
+      <div class="row"><button class="btn primary" data-act="newSession">Start check-in</button></div>`}</section>`;
+  } else if(s.status==="checkin"){
+    left+=checkinCard(s);
+  } else {
+    const p1=roundComplete(s,1), p2=roundComplete(s,2), open2=courtsOf(s,2).filter(Boolean).length;
+    left+=`<section class="card"><h2>${esc(fmtDate(s.date))}</h2>
+      <p>${Object.keys(s.players).length} players on ${s.courts.r1.length} courts. ${s.status==="done"?"Session finished.":`Round 1: ${p1.done} of ${p1.total} games. Round 2: ${open2} of ${s.courts.r1.length} courts open, ${p2.done} of ${p2.total} games.`}</p>
+      <p class="dupr">Round 2 courts open automatically when the Round 1 courts that feed them finish.</p>
+      <div class="row">
+      ${playing(s)?`<button class="btn primary" data-act="finish">Finish the session</button>`:""}
+      ${s.status==="done"?`<button class="btn" data-act="reopen">Reopen</button><button class="btn primary" data-act="nextNight">Set up next session</button>`:""}
+      <button class="btn" data-act="exportDupr">Results CSV for DUPR</button>
+      ${MODE==="demo"&&s.status!=="done"?`<button class="btn" data-act="demoFill">Fill test scores</button>`:""}
+      </div>
+      <div class="row" style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line)"><button class="btn danger" data-act="backCheckin">Clear &amp; start again</button><span class="dupr" style="flex:1;min-width:200px">Clears all courts and scores for this session and goes back to check-in. Everyone stays checked in.</span></div>
+      <p class="dupr" style="margin-top:10px">Any player can enter a score. Once entered it locks; only a host can change it (Edit on the game).</p></section>`;
+  }
+  right+=settingsCard();
+  const login = MODE==="live"&&!isHost ? hostLoginCard() : "";
+  return `${login}<div class="hostgrid"><div style="display:grid;gap:16px">${left}</div><div style="display:grid;gap:16px">${right}</div></div>`;
+}
+
+function checkinCard(s){
+  const here=new Set(s.here||[]);
+  const q=hostSearch.trim().toLowerCase();
+  const R=s.roster||{};
+  const ps=Object.entries(R).sort((a,b)=>a[1].name.localeCompare(b[1].name));
+  const shown=ps.filter(([,p])=>!q||p.name.toLowerCase().includes(q)||String(p.dupr||"").toLowerCase().includes(q));
+  const plan=courtPlan(here.size,+SERIES.maxCourts||6);
+  const noRating=[...here].filter(id=>!validRating(Number(R[id]?.rating))).map(id=>R[id]?.name).filter(Boolean);
+  const noId=[...here].filter(id=>!R[id]?.dupr).map(id=>R[id]?.name).filter(Boolean);
+  return `<section class="card"><h2>Check-in · ${esc(shortDate(s.date))}</h2>
+    <h3 style="margin-top:6px">1. This week's OpenSports list</h3>
+    <p>Export the attendee list from the OpenSports event (with the DUPR ID and DUPR rating questions) and load it here. Everyone on it is checked in with the rating they entered. Loading a list replaces this week's list.</p>
+    <div class="row"><label class="btn small" for="csvFile" style="cursor:pointer">Choose CSV file</label><input id="csvFile" type="file" accept=".csv,text/csv,text/plain" hidden><span class="dupr">or paste it below</span></div>
+    <textarea id="csvWeek" data-keep placeholder="First Name,Last Name,DUPR ID,DUPR Rating" style="margin-top:8px"></textarea>
+    <div class="row" style="margin-top:8px"><button class="btn primary small" data-act="csvWeek">Check in this list</button></div>
+    <h3>2. Check who's here</h3>
+    <p>Everyone on this week's list starts ticked. Tap anyone who hasn't turned up to untick them. You can fix a rating or DUPR ID here.</p>
+    <div class="plan"><span><b>${here.size}</b> here</span>${plan.ok?plan.sizes.map((z,i)=>`<span>Ct ${i+1}: <b>${z}</b></span>`).join(""):""}</div>
+    ${plan.ok?"":`<div class="banner">${esc(plan.why)}</div>`}
+    ${noRating.length?`<div class="banner">No DUPR rating for: ${noRating.map(esc).join(", ")}. They'll be placed on the bottom court. Type it in next to their name.</div>`:""}
+    ${noId.length?`<div class="banner">No DUPR ID for: ${noId.map(esc).join(", ")}. Their games can't be uploaded to DUPR until it's added next to their name.</div>`:""}
+    <div class="row" style="margin:10px 0"><label class="search" style="max-width:none">${searchIcon}<input id="hq" type="search" placeholder="Search players" value="${esc(hostSearch)}" autocomplete="off" aria-label="Search players"></label>
+    <button class="btn small" data-act="allOn">Tick all</button><button class="btn small" data-act="allOff">Clear all</button></div>
+    <div class="checkin">${shown.map(([id,p])=>`<div class="chkrow"><button class="chk" data-here="${id}" aria-pressed="${here.has(id)}"><span class="box">${here.has(id)?"✓":""}</span><span class="nm">${esc(p.name)}</span></button>
+      ${p.dupr?"":`<input id="rd-${id}" class="rin" data-keep data-rf="dupr" data-rid="${id}" type="text" placeholder="DUPR ID" aria-label="DUPR ID for ${esc(p.name)}">`}
+      <input id="rr-${id}" class="rin" data-keep data-rf="rating" data-rid="${id}" type="text" inputmode="decimal" value="${p.rating??""}" placeholder="Rating" aria-label="DUPR rating for ${esc(p.name)}"></div>`).join("")||`<p class="dupr">${ps.length?"No players match.":"No players yet. Load this week's OpenSports list above."}</p>`}</div>
+    <h3>Add player</h3>
+    <form id="addHere" class="grid2"><label class="f">Name<input id="ah-n" data-keep type="text" required></label><label class="f">DUPR ID<input id="ah-d" data-keep type="text"></label><label class="f">DUPR rating<input id="ah-r" data-keep type="number" step="0.001" min="1" max="8"></label><button class="btn" type="submit" style="align-self:end">Add &amp; check in</button></form>
+    <div class="row" style="margin-top:14px"><button class="btn primary" data-act="makeCourts" ${plan.ok?"":"disabled"}>Make Round 1 courts</button><button class="btn danger small" data-act="cancelNight">Cancel this session</button></div>
+  </section>`;
+}
+
+function settingsCard(){
+  const S=SERIES; const days=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  return `<section class="card"><h2>Settings</h2>
+    <form id="settings" class="grid2">
+      <label class="f">Session name<input id="st-name" data-keep type="text" value="${esc(S.name)}"></label>
+      <label class="f">Venue<input id="st-venue" data-keep type="text" value="${esc(S.venue)}"></label>
+      <label class="f">Usual day<select id="st-day" data-keep><option value="">Any (use today)</option>${days.map((d,i)=>`<option value="${i}" ${String(S.day)===String(i)?"selected":""}>${d}</option>`).join("")}</select></label>
+      <label class="f">Max courts<input id="st-courts" data-keep type="number" min="1" max="12" value="${S.maxCourts}"></label>
+      <label class="f">Games to<input id="st-target" data-keep type="number" min="5" max="21" value="${S.target}"></label>
+      <label class="f">Win by<input id="st-winby" data-keep type="number" min="1" max="2" value="${S.winBy}"></label>
+      <button class="btn primary" type="submit" style="align-self:end">Save settings</button>
+    </form><p class="dupr" style="margin-top:10px">Changes to games-to and win-by apply from the next session.</p></section>`;
+}
+
+/* ---------- modals ---------- */
+function renderModal(){
+  const el=$("#modal");
+  if(!modal){ el.innerHTML=""; return; }
+  if(modal.kind==="score") el.innerHTML=scoreModal();
+  else if(modal.kind==="text") el.innerHTML=`<div class="modal-bg" data-close><div class="modal wide" role="dialog" aria-modal="true"><h2>${esc(modal.title)}</h2><p class="muted">${esc(modal.note||"")}</p><textarea id="mtext" readonly style="min-height:260px">${esc(modal.text)}</textarea><div class="row" style="margin-top:10px"><button class="btn primary" data-act="copyText">Copy</button><button class="btn" data-act="downloadText">Download CSV</button><button class="btn ghost" data-act="closeModal">Close</button></div></div></div>`;
+  else if(modal.kind==="login") el.innerHTML=`<div class="modal-bg" data-close><div class="modal" role="dialog" aria-modal="true"><h2>Host login</h2><p class="muted">${MODE==="demo"?"Demo: use any email and the password <b>demo</b>.":"For committee members running the session."}</p>
+    <form id="loginForm" style="display:grid;gap:10px"><label class="f">Email<input id="lg-email" data-keep type="email" autocomplete="username" required></label><label class="f">Password<input id="lg-pass" data-keep type="password" autocomplete="current-password" required></label>
+    <div class="msg ${loginMsg&&/match|Couldn/.test(loginMsg)?"bad":""}">${esc(loginMsg)}</div>
+    <div class="row"><button class="btn primary" type="submit">Log in</button><button class="btn ghost" type="button" data-act="forgot">Forgot password</button><button class="btn ghost" type="button" data-act="closeModal">Cancel</button></div></form></div></div>`;
+}
+function scoreModal(){
+  const m=modal, s=SESS; const g=gamesFor(courtsOf(s,m.r)[m.ci]||[])[m.gi]; if(!g){ modal=null; return ""; }
+  const tgt=s.target||11, wb=s.winBy||2;
+  const a=m.a===""?NaN:+m.a, b=m.b===""?NaN:+m.b;
+  const err=(m.a===""||m.b==="")?"":validScore(a,b,tgt,wb);
+  const ok=m.a!==""&&m.b!==""&&!err;
+  const team=(t)=>t.map(p=>esc(pName(s,p))).join(" & ");
+  const step=(side,val)=>`<div class="stepper"><button type="button" data-step="${side}" data-d="-1" aria-label="Minus one">−</button><input id="sc-${side}" data-keep inputmode="numeric" pattern="[0-9]*" type="text" maxlength="2" value="${esc(val)}" aria-label="Score"><button type="button" data-step="${side}" data-d="1" aria-label="Plus one">+</button></div>`;
+  if(m.confirm){
+    const win=a>b?team(g.a):team(g.b);
+    return `<div class="modal-bg"><div class="modal" role="dialog" aria-modal="true"><h2>Check the score</h2>
+      <div class="confirm"><b>${win}</b> won <b>${Math.max(a,b)}–${Math.min(a,b)}</b>.<br>${m.host?"This replaces the saved score.":"Once it's in, only a host can change it."}</div>
+      <div class="msg bad">${esc(m.err||"")}</div>
+      <div class="row"><button class="btn primary" data-act="scoreSubmit" ${m.busy?"disabled":""}>${m.busy?"Saving…":"Submit score"}</button><button class="btn ghost" data-act="scoreBack">Back</button></div></div></div>`;
+  }
+  return `<div class="modal-bg" data-close><div class="modal" role="dialog" aria-modal="true">
+    <h2>Court ${m.ci+1} · Game ${m.gi+1}</h2><p class="muted">Round ${m.r} · first to ${tgt}, win by ${wb}</p>
+    <div class="sc ${ok&&a>b?"win":""}"><div class="who">${team(g.a)}</div>${step("a",m.a)}</div>
+    <div class="sc ${ok&&b>a?"win":""}"><div class="who">${team(g.b)}</div>${step("b",m.b)}</div>
+    <div class="msg ${err?"bad":""}">${esc(err)}</div>
+    <div class="row"><button class="btn primary" data-act="scoreNext" ${ok?"":"disabled"}>Next</button>
+    ${m.host&&s.scores?.[m.k]?`<button class="btn danger" data-act="scoreClear">Unlock &amp; clear</button>`:""}
+    <button class="btn ghost" data-act="closeModal">Cancel</button></div></div></div>`;
+}
+
+/* ======================================================================
+   Actions
+   ====================================================================== */
+async function saveSeries(mut){ const x=clone(SERIES||SERIES_DEFAULT); mut(x); try{ await store.saveSeries(x); }catch(e){ toast(e.code==="permission-denied"?"Your login can't make changes.":"Couldn't save. Check your connection."); } }
+async function saveSession(mut){ const x=clone(SESS); mut(x); try{ await store.saveSession(x); }catch(e){ toast(e.code==="permission-denied"?"Your login can't make changes.":"Couldn't save. Check your connection."); throw e; } }
+const sessSummary = x=>({date:x.date,status:x.status,count:(x.status==="checkin"?(x.here||[]).length:Object.keys(x.players||{}).length)});
+async function saveBoth(mutSess){
+  const x=clone(SESS); mutSess(x);
+  await store.saveSession(x);
+  await saveSeries(y=>{ y.sessions[x.id]=sessSummary(x); });
+}
+
+function armed(t,label,fn){
+  if(t.dataset.armed){ fn(); return; }
+  t.dataset.armed="1"; const old=t.innerHTML; t.textContent=label;
+  setTimeout(()=>{ if(t.isConnected){ delete t.dataset.armed; t.innerHTML=old; } },4000);
+}
+
+document.addEventListener("click",async e=>{
+  const t=e.target.closest("button,[data-close]"); if(!t) return;
+  if(t.matches("[data-close]") && e.target!==t) return;
+  if(t.matches("[data-close]")){ modal=null; renderModal(); return; }
+  const d=t.dataset;
+  if(d.tab){ tab=d.tab; ls.set("ladder-tab",tab); swapMode=false; swapPick=null; render(); window.scrollTo(0,0); return; }
+  if(d.round){ roundView=+d.round; render(); return; }
+  if(d.pickme){ me=d.pickme; ls.set("ladder-me",me); search=""; render(); return; }
+  if(d.csv){ const id=d.csv; const sx=id===viewSid&&SESS?SESS:await store.getSession(id); if(!sx){toast("Couldn't load that session.");return} openDuprExport(sx); return; }
+  if(d.open){ viewSid=d.open; roundView=null; store.watch(viewSid); tab="courts"; render(); return; }
+  if(d.enter||d.edit){ const k=d.enter||d.edit; const sc=SESS.scores?.[k]; modal={kind:"score",k,r:+d.r,ci:+d.ci,gi:+d.gi,a:sc?String(sc.a):"",b:sc?String(sc.b):"",host:!!d.edit}; renderModal(); setTimeout(()=>$("#sc-a")?.focus(),0); return; }
+  if(d.step){ const side=d.step; const cur=modal[side]===""?(+d.d>0?(SESS.target||11)-1:0):+modal[side]; modal[side]=String(Math.max(0,cur+(+d.d))); renderModal(); return; }
+  if(d.here){ const id=d.here; await saveBoth(x=>{ const h=new Set(x.here||[]); h.has(id)?h.delete(id):h.add(id); x.here=[...h]; }); return; }
+  if(d.swap){ const pid=d.swap, ci=+d.ci;
+    if(!swapPick){ swapPick={pid,ci}; render(); return; }
+    if(swapPick.pid===pid){ swapPick=null; render(); return; }
+    const r=+d.r||1, a=swapPick;
+    const scored=[...new Set([a.ci,ci])].filter(c=>Object.keys(SESS.scores||{}).some(k=>k.startsWith(`r${r}_c${c+1}_`)));
+    const doSwap=async()=>{ swapPick=null; await saveSession(x=>{ if(r===2) x.courts.r2=courtsOf(x,2).map(c=>c?[...c]:null); const cs=x.courts["r"+r]; const i=cs[a.ci].indexOf(a.pid), j=cs[ci].indexOf(pid); cs[a.ci][i]=pid; cs[ci][j]=a.pid;
+        scored.forEach(c=>Object.keys(x.scores||{}).forEach(k=>{ if(k.startsWith(`r${r}_c${c+1}_`)) delete x.scores[k]; })); });
+      toast(scored.length?`Players swapped. Scores cleared on Court ${scored.map(c=>c+1).join(" & ")}.`:"Players swapped."); };
+    if(scored.length){ swapPick=null; render(); toast(`Court ${scored.map(c=>c+1).join(" & ")} has started, so players can't be swapped.`); } else await doSwap();
+    return; }
+
+  const a=d.act; if(!a) return;
+  if(a==="closeModal"){ modal=null; renderModal(); return; }
+  if(a==="createSeries"){ try{ await store.saveSeries(clone(SERIES_DEFAULT)); tab="host"; render(); toast("Set up. Add players under Host."); }catch(e){ toast("Couldn't create it. Check the Firestore rules are published."); } return; }
+  if(a==="toCurrent"){ viewSid=SERIES.current; roundView=null; store.watch(viewSid); render(); return; }
+  if(a==="clearMe"){ me=""; ls.del("ladder-me"); render(); return; }
+  if(a==="swapMode"){ swapMode=!swapMode; swapPick=null; render(); return; }
+  if(a==="demoReset"){ armed(t,"Tap again to reset",()=>{ store.reset(); roundView=null; toast("Demo reset."); }); return; }
+  if(a==="showLogin"){ modal={kind:"login"}; loginMsg=""; renderModal(); setTimeout(()=>$("#lg-email")?.focus(),0); return; }
+  if(a==="logout"){ swapMode=false; swapPick=null; if(tab==="host") tab="courts";
+    if(MODE==="demo"){ isHost=false; ls.del("dupr-demo-host"); render(); toast("Logged out."); return; }
+    store.A.signOut(store.auth); toast("Logged out."); return; }
+  if(a==="forgot"&&MODE==="demo"){ loginMsg="In the demo the password is demo."; renderModal(); return; }
+  if(a==="forgot"){ const em=$("#lg-email")?.value.trim(); if(!em){loginMsg="Type your email first, then press Forgot password.";renderModal();return}
+    store.A.sendPasswordResetEmail(store.auth,em).then(()=>{loginMsg="Password reset email sent.";renderModal()}).catch(()=>{loginMsg="Couldn't send the reset email. Check the address.";renderModal()}); return; }
+
+  // score entry
+  if(a==="scoreNext"){ modal.confirm=true; modal.err=""; renderModal(); return; }
+  if(a==="scoreBack"){ modal.confirm=false; renderModal(); return; }
+  if(a==="scoreSubmit"){
+    const m=modal, v={a:+m.a,b:+m.b,at:Date.now()};
+    m.busy=true; renderModal();
+    try{
+      if(m.host) await store.hostScore(viewSid,m.k,v); else await store.submitScore(viewSid,m.k,v);
+      modal=null; renderModal(); toast("Score saved.");
+    }catch(err){ m.busy=false; m.err= err.code==="taken"?"A score for this game was already entered. Ask a host if it's wrong.":"Couldn't save. Check your connection and try again."; renderModal(); }
+    return; }
+  if(a==="scoreClear"){ armed(t,"Tap again to clear",async()=>{ await store.hostScore(viewSid,modal.k,null); modal=null; renderModal(); toast("Score cleared. Players can enter it again."); }); return; }
+
+  // host: session flow
+  if(a==="newSession"||a==="nextNight"){
+    if(a==="nextNight"){ viewSid=null; store.watch(null); tab="host"; render(); return; }
+    const date=$("#newDate")?.value||todayISO(); let id="s-"+date, n=2; while(SERIES.sessions[id]) id=`s-${date}-${n++}`;
+    const sess={id,date,status:"checkin",roster:{},here:[],players:{},courts:{},scores:{},target:+SERIES.target||11,winBy:+SERIES.winBy||2};
+    await store.saveSession(sess);
+    await saveSeries(x=>{ x.sessions[id]=sessSummary(sess); x.current=id; });
+    viewSid=id; store.watch(id); toast("Check-in open."); return; }
+  if(a==="allOn"){ await saveBoth(x=>{ x.here=Object.keys(x.roster||{}); }); toast("Everyone ticked."); return; }
+  if(a==="allOff"){ armed(t,"Tap again to untick everyone",()=>saveBoth(x=>{x.here=[];})); return; }
+  if(a==="cancelNight"){ armed(t,"Tap again to cancel",async()=>{ const id=SESS.id; await saveSeries(x=>{ delete x.sessions[id]; if(x.current===id) x.current=null; }); viewSid=null; store.watch(null); toast("Session cancelled."); }); return; }
+  if(a==="makeCourts"){ const x=clone(SESS); const plan=makeRound1(x,SERIES); if(!plan.ok){toast(plan.why);return}
+    await store.saveSession(x); await saveSeries(y=>{ y.sessions[x.id]=sessSummary(x); });
+    tab="courts"; ls.set("ladder-tab",tab); roundView=1; render(); toast("Round 1 courts are up."); return; }
+  if(a==="backCheckin"){ const n=Object.keys(SESS.scores||{}).length;
+    armed(t,n?`Clears ${n} scores. Tap again`:"Tap again to start again",async()=>{ await saveBoth(x=>{ x.status="checkin"; x.courts={}; x.scores={}; }); swapMode=false; swapPick=null; roundView=null; render(); toast("Cleared. Back to check-in."); }); return; }
+  if(a==="finish"){ const p=roundComplete(SESS,2);
+    armed(t,p.complete?"Tap again to finish":`${p.total-p.done} games unscored. Tap again to finish`,async()=>{ await saveBoth(x=>{x.status="done";}); tab="courts"; roundView=2; render(); toast("Session finished."); }); return; }
+  if(a==="reopen"){ await saveBoth(x=>{x.status="r1";}); return; }
+  if(a==="demoFill"){ const r=roundComplete(SESS,1).complete?2:1; await saveSession(x=>{ courtsOf(x,r).forEach((c,ci)=>c&&gamesFor(c).forEach((g,gi)=>{ const k=gkey(r,ci,gi); if(x.scores[k]) return; const l=Math.floor(Math.random()*10); x.scores[k]=Math.random()<.5?{a:11,b:l}:{a:l,b:11}; })); }); toast("Test scores added."); return; }
+  if(a==="exportDupr"){ openDuprExport(SESS); return; }
+
+  // players
+  if(a==="csvWeek"){ const r=importCsv($("#csvWeek")?.value||""); if(r.error){toast(r.error);return}
+    const go=async()=>{ await saveBoth(x=>{ x.roster=r.players; x.here=r.ids; }); toast(`${r.ids.length} players loaded and checked in.`); };
+    if(Object.keys(SESS.roster||{}).length) armed(t,"Replaces this week's list. Tap again",go); else await go(); return; }
+  if(a==="copyText"){ const ta=$("#mtext"); try{ await navigator.clipboard.writeText(ta.value); toast("Copied."); }catch(_){ ta.focus(); ta.select(); toast("Selected. Press Ctrl+C or Cmd+C to copy."); } return; }
+  if(a==="downloadText"){ const name=modal.file||"export.csv", text=modal.text;
+    const dl = window.claude?.use ? await window.claude.use("downloads").catch(()=>null) : null;
+    if(dl){ try{ await dl.save({filename:name,data:text}); toast("Downloaded."); }catch(err){ if(err?.code!=="declined") toast("Download isn't available here. Use Copy instead."); } return; }
+    const b=new Blob([text],{type:"text/csv"}); const u=URL.createObjectURL(b); const l=document.createElement("a"); l.href=u; l.download=name; document.body.append(l); l.click(); l.remove(); setTimeout(()=>URL.revokeObjectURL(u),2000); return; }
+});
+
+document.addEventListener("input",e=>{
+  const t=e.target;
+  if(t.id==="q"){ search=t.value; if(search) { me=""; } render(); return; }
+  if(t.id==="hq"){ hostSearch=t.value; render(); return; }
+  if(t.id==="sc-a"||t.id==="sc-b"){ modal[t.id.slice(3)]=t.value.replace(/\D/g,"").slice(0,2); renderModal(); const el=document.getElementById(t.id); el.focus(); const L=el.value.length; try{el.setSelectionRange(L,L)}catch(_){} return; }
+});
+document.addEventListener("change",async e=>{
+  const t=e.target;
+  if(t.id==="csvFile"&&t.files?.[0]){ const f=t.files[0];
+    if(/\.xlsx?$/i.test(f.name)){ toast("That's an Excel file. Save it as CSV first, or open it and copy the rows in."); t.value=""; return; }
+    const txt=await f.text(); const ta=$("#csvWeek"); if(ta){ ta.value=txt; } t.value=""; toast(`Loaded ${f.name}. Press Check in this list.`); return; }
+  if(t.dataset.rf){ const id=t.dataset.rid, f=t.dataset.rf; let v=t.value.trim();
+    if(f==="dupr") v=v.toUpperCase();
+    if(f==="rating"){ const n=parseFloat(v.replace(",",".")); v = v===""?null:(validRating(n)?Math.round(n*1000)/1000:undefined); if(v===undefined){ toast("Rating must be between 1.000 and 8.000."); render(); return; } }
+    await saveSession(x=>{ if(x.roster?.[id]) x.roster[id][f]=v; }); toast("Saved."); }
+});
+document.addEventListener("submit",async e=>{
+  e.preventDefault(); const f=e.target;
+  if(f.id==="addHere"){
+    const name=$("#ah-n").value.trim(); if(!name) return;
+    const r=parseFloat(($("#ah-r").value||"").replace(",",".")); const id=uid();
+    await saveBoth(x=>{ x.roster=x.roster||{}; x.roster[id]={name,dupr:$("#ah-d").value.trim().toUpperCase(),rating:validRating(r)?Math.round(r*1000)/1000:null}; x.here=[...new Set([...(x.here||[]),id])]; });
+    toast(`${name} added and checked in.`); return; }
+  if(f.id==="settings"){
+    await saveSeries(x=>{ x.name=$("#st-name").value.trim()||"DUPR Session"; x.venue=$("#st-venue").value.trim(); x.day=$("#st-day").value;
+      x.maxCourts=Math.max(1,Math.min(12,+$("#st-courts").value||6)); x.target=Math.max(5,+$("#st-target").value||11); x.winBy=Math.max(1,+$("#st-winby").value||2); });
+    toast("Settings saved."); return; }
+  if(f.id==="loginForm"){
+    const em=$("#lg-email").value.trim(), pw=$("#lg-pass").value;
+    if(MODE==="demo"){ if(pw!=="demo"){ loginMsg="That email and password don't match. In the demo the password is demo."; renderModal(); $("#lg-email").value=em; return; }
+      isHost=true; ls.set("dupr-demo-host","1"); modal=null; loginMsg=""; renderModal(); tab="host"; render(); toast("Logged in as host."); return; }
+    loginMsg="Logging in…"; renderModal();
+    try{ await store.A.signInWithEmailAndPassword(store.auth,em,pw); modal=null; loginMsg=""; renderModal(); toast("Logged in."); tab="host"; render(); }
+    catch(err){ loginMsg=/invalid|wrong|not-found|credential/.test(err.code||"")?"That email and password don't match. Try again or use Forgot password.":"Couldn't log in: "+(err.code||err.message); renderModal(); $("#lg-email").value=em; }
+  }
+});
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&modal&&!modal.busy){ modal=null; renderModal(); } });
+
+/* ---------- CSV ---------- */
+const csvCell=v=>{ const s=String(v??""); return /[",\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s; };
+function parseCsv(txt){
+  const rows=[]; let row=[], cell="", q=false;
+  const delim = (txt.split("\n")[0].match(/\t/g)||[]).length > (txt.split("\n")[0].match(/,/g)||[]).length ? "\t" : ",";
+  for(let i=0;i<txt.length;i++){ const c=txt[i];
+    if(q){ if(c==='"'){ if(txt[i+1]==='"'){cell+='"';i++} else q=false } else cell+=c; continue; }
+    if(c==='"') q=true; else if(c===delim){row.push(cell);cell=""} else if(c==="\n"||c==="\r"){ if(c==="\r"&&txt[i+1]==="\n") i++; row.push(cell); rows.push(row); row=[]; cell=""; } else cell+=c; }
+  if(cell!==""||row.length){row.push(cell);rows.push(row)}
+  return rows.filter(r=>r.some(x=>x.trim()!==""));
+}
+function importCsv(txt){
+  const rows=parseCsv(txt.trim()); if(rows.length<2) return {error:"Paste a header line and at least one player."};
+  const h=rows[0].map(x=>x.trim().toLowerCase());
+  const find=(...keys)=>h.findIndex(x=>keys.some(k=>x===k||x.includes(k)));
+  let iFirst=find("first name","first"), iLast=find("last name","last","surname");
+  let iName=h.findIndex(x=>x==="name"||x==="full name"||x==="player"||x==="player name");
+  const iDupr=h.findIndex(x=>/dupr/.test(x)&&/id/.test(x));
+  let iRat=h.findIndex(x=>/doubles/.test(x)); if(iRat<0) iRat=h.findIndex(x=>/rating/.test(x));
+  if(iName<0&&iFirst<0) return {error:"Couldn't find a Name column (or First name + Last name)."};
+  const players={}; let added=0, updated=0; const ids=[];
+  const byDupr={}, byName={};
+  rows.slice(1).forEach(r=>{
+    const name=(iName>=0?r[iName]:`${r[iFirst]||""} ${iLast>=0?r[iLast]||"":""}`).trim(); if(!name) return;
+    const dupr=iDupr>=0?(r[iDupr]||"").trim().toUpperCase():""; const rr=iRat>=0?parseFloat(String(r[iRat]).replace(",",".")):NaN; 
+    const id=(dupr&&byDupr[dupr.toUpperCase()])||byName[name.toLowerCase()];
+    if(id){ const p=players[id]; if(dupr) p.dupr=dupr; if(!isNaN(rr)) p.rating=Math.round(rr*1000)/1000; updated++; ids.push(id); }
+    else { const nid=uid(); players[nid]={name,dupr,rating:isNaN(rr)||!validRating(rr)?null:Math.round(rr*1000)/1000}; byName[name.toLowerCase()]=nid; if(dupr) byDupr[dupr.toUpperCase()]=nid; added++; ids.push(nid); }
+  });
+  return {players,added,updated,ids:[...new Set(ids)]};
+}
+function openDuprExport(sx){ const r=duprCsv(sx);
+  modal={kind:"text",title:`Results for DUPR · ${shortDate(sx.date)}`,note:`${r.games} games in DUPR's match upload format. Upload it in DUPR: Clubs → your club → Matches → Add Matches → Import Matches via CSV.${r.missing.length?` Missing DUPR ID: ${r.missing.join(", ")}. Add them under Players first, or DUPR will reject those games.`:""}`,text:r.text,file:`atp-dupr-session-${sx.date}.csv`}; renderModal(); }
+function duprCsv(s){
+  // Matches DUPR's match upload template. One row per game, doubles, rally scoring, single game.
+  const head=["Match Type","Scoring Type","Event Name","Match Date","Player 1A Name","Player 1A DUPR ID","Player 1A Email","Player 1B Name","Player 1B DUPR ID","Player 1B Email","Player 2A Name","Player 2A DUPR ID","Player 2A Email","Player 2B Name","Player 2B DUPR ID","Player 2B Email","Game 1 Team 1 Score","Game 1 Team 2 Score","Game 2 Team 1 Score","Game 2 Team 2 Score","Game 3 Team 1 Score","Game 3 Team 2 Score","Game 4 Team 1 Score","Game 4 Team 2 Score","Game 5 Team 1 Score","Game 5 Team 2 Score"];
+  const out=[head]; const ev=`ATP ${SERIES?.name||"DUPR Session"}`; const missing=new Set();
+  [1,2].forEach(r=>(s.courts?.r1?courtsOf(s,r):[]).forEach((c,ci)=>c&&gamesFor(c).forEach((g,gi)=>{
+    const sc=s.scores?.[gkey(r,ci,gi)]; if(!sc) return;
+    const P=p=>{ const x=s.players[p]||{}; if(!x.dupr) missing.add(x.name||p); return [x.name||"",x.dupr||"",""]; };
+    out.push(["D","Rally",ev,s.date,...P(g.a[0]),...P(g.a[1]),...P(g.b[0]),...P(g.b[1]),sc.a,sc.b,"","","","","","","",""]);
+  })));
+  return {text:out.map(r=>r.map(csvCell).join(",")).join("\n"), games:out.length-1, missing:[...missing]};
+}
+
+/* ======================================================================
+   Start
+   ====================================================================== */
+async function boot(){
+  render();
+  const forceDemo=new URLSearchParams(location.search).has("demo");
+  let cfg=null;
+  if(!forceDemo){ try{ cfg=await import("./firebase-config.js"); }catch(e){ cfg=null; } }
+  if(cfg && cfg.firebaseConfig?.apiKey && !/PASTE/.test(cfg.firebaseConfig.apiKey)){
+    try{ store=await firebaseStore(cfg); }catch(e){ configError="Couldn't load Firebase: "+e.message; render(); }
+  } else {
+    MODE="demo"; isHost=ls.get("dupr-demo-host")==="1"; store=localStore(); viewSid=SERIES?.current||null;
+    let db; try{db=JSON.parse(ls.get(DEMO_KEY))}catch(_){}
+    viewSid=db?.series?.current||null; store.watch(viewSid);
+  }
+}
+boot();
+</script>
+</body>
+</html>
