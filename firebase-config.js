@@ -1,10 +1,7 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+// Firebase settings for ATP DUPR Session (project: atp-dupr-sessions).
+// These values are not secret: the Firestore rules decide who can change things.
 
-// Your web app's Firebase configuration
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyAIaaiH_v9KRoCb9PEsQ5gKy0J4QQetdm8",
   authDomain: "atp-dupr-sessions.firebaseapp.com",
   projectId: "atp-dupr-sessions",
@@ -13,5 +10,5 @@ const firebaseConfig = {
   appId: "1:111557656014:web:bc0b940102109cee0ebf9f"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Where the sessions are saved in the database.
+export const SESSION_COLLECTION = "duprsession";
