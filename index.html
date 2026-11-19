@@ -44,6 +44,8 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;backgroun
 .hostlink{font-family:var(--display);font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding:3px 10px;border-radius:99px;border:1px solid var(--line);background:none;color:var(--muted);cursor:pointer}
 .hostlink.on{border-color:var(--lime);color:var(--lime)}
 .tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+@media (max-width:520px){.tabs{gap:0;justify-content:space-between}.tabs button{padding:8px 4px 7px!important;font-size:14px!important;letter-spacing:.02em!important}}
+@media (max-width:380px){.tabs button{font-size:13px!important;padding:8px 2px 7px!important;letter-spacing:0!important}}
 .tabs button{background:none;border:0;border-bottom:3px solid transparent;padding:8px 9px 7px;font-family:var(--display);font-weight:700;font-size:15px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);cursor:pointer;white-space:nowrap}
 .tabs button[aria-current="true"]{color:var(--ink);border-color:var(--lime)}
 
@@ -220,7 +222,7 @@ let MODE="loading", SERIES=null, SESS=null, viewSid=null;
 let isHost=false, userEmail=null, hostReason="", showLogin=false, loginMsg="";
 let tab = ls.get("ladder-tab")||"courts";
 let roundView=null, me = ls.get("ladder-me")||"", search="", hostSearch="", swapPick=null, swapMode=false;
-let modal=null, pendingRender=false, configError="";
+let modal=null, pendingRender=false, configError="", dateMode="today", pickDate="";
 let store=null;
 
 /* ---------- helpers ---------- */
@@ -629,7 +631,10 @@ function hostView(){
     left+=`<section class="card"><h2>${viewingPast?"Past session":"Start a session"}</h2>
       ${viewingPast?`<p>You're looking at ${esc(fmtDate(s.date))}. Go back to the current session to run it.</p><div class="row"><button class="btn" data-act="toCurrent">Back to current session</button></div>`:
       `<p>Start check-in, then load this week's OpenSports list. Everyone on it is checked in with their current DUPR rating; untick anyone who doesn't turn up.</p>
-      <div class="row"><label class="f" style="min-width:180px">Date<input id="newDate" type="date" value="${nextSessionDate()}"></label></div>
+      <div class="row" style="align-items:end"><label class="f" style="min-width:170px">Date<select id="dateMode" data-keep>
+        <option value="today" ${dateMode==="today"?"selected":""}>Today (${esc(shortDate(todayISO()))})</option>
+        <option value="pick" ${dateMode==="pick"?"selected":""}>Choose a date…</option></select></label>
+        ${dateMode==="pick"?`<label class="f" style="min-width:170px">Pick a date<input id="newDate" data-keep type="date" value="${esc(pickDate||todayISO())}"></label>`:""}</div>
       <div class="row"><button class="btn primary" data-act="newSession">Start check-in</button></div>`}</section>`;
   } else if(s.status==="checkin"){
     left+=checkinCard(s);
@@ -690,7 +695,6 @@ function settingsCard(){
     <form id="settings" class="grid2">
       <label class="f">Session name<input id="st-name" data-keep type="text" value="${esc(S.name)}"></label>
       <label class="f">Venue<input id="st-venue" data-keep type="text" value="${esc(S.venue)}"></label>
-      <label class="f">Usual day<select id="st-day" data-keep><option value="">Any (use today)</option>${days.map((d,i)=>`<option value="${i}" ${String(S.day)===String(i)?"selected":""}>${d}</option>`).join("")}</select></label>
       <label class="f">Max courts<input id="st-courts" data-keep type="number" min="1" max="12" value="${S.maxCourts}"></label>
       <label class="f">Games to<input id="st-target" data-keep type="number" min="5" max="21" value="${S.target}"></label>
       <label class="f">Win by<input id="st-winby" data-keep type="number" min="1" max="2" value="${S.winBy}"></label>
@@ -807,7 +811,7 @@ document.addEventListener("click",async e=>{
   // host: session flow
   if(a==="newSession"||a==="nextNight"){
     if(a==="nextNight"){ viewSid=null; store.watch(null); tab="host"; render(); return; }
-    const date=$("#newDate")?.value||todayISO(); let id="s-"+date, n=2; while(SERIES.sessions[id]) id=`s-${date}-${n++}`;
+    const date=(dateMode==="pick"&&$("#newDate")?.value)||todayISO(); dateMode="today"; pickDate=""; let id="s-"+date, n=2; while(SERIES.sessions[id]) id=`s-${date}-${n++}`;
     const sess={id,date,status:"checkin",roster:{},here:[],players:{},courts:{},scores:{},target:+SERIES.target||15,winBy:+SERIES.winBy||2};
     await store.saveSession(sess);
     await saveSeries(x=>{ x.sessions[id]=sessSummary(sess); x.current=id; });
@@ -845,6 +849,8 @@ document.addEventListener("input",e=>{
 });
 document.addEventListener("change",async e=>{
   const t=e.target;
+  if(t.id==="dateMode"){ dateMode=t.value; t.blur(); render(); if(dateMode==="pick") setTimeout(()=>{ const d=$("#newDate"); if(d){ d.focus(); try{ d.showPicker(); }catch(_){} } },0); return; }
+  if(t.id==="newDate"){ pickDate=t.value; return; }
   if(t.id==="csvFile"&&t.files?.[0]){ const f=t.files[0];
     if(/\.xlsx?$/i.test(f.name)){ toast("That's an Excel file. Save it as CSV first, or open it and copy the rows in."); t.value=""; return; }
     const txt=await f.text(); const ta=$("#csvWeek"); if(ta){ ta.value=txt; } t.value=""; toast(`Loaded ${f.name}. Press Check in this list.`); return; }
@@ -861,7 +867,7 @@ document.addEventListener("submit",async e=>{
     await saveBoth(x=>{ x.roster=x.roster||{}; x.roster[id]={name,dupr:$("#ah-d").value.trim().toUpperCase(),rating:validRating(r)?Math.round(r*1000)/1000:null}; x.here=[...new Set([...(x.here||[]),id])]; });
     toast(`${name} added and checked in.`); return; }
   if(f.id==="settings"){
-    await saveSeries(x=>{ x.name=$("#st-name").value.trim()||"DUPR Session"; x.venue=$("#st-venue").value.trim(); x.day=$("#st-day").value;
+    await saveSeries(x=>{ x.name=$("#st-name").value.trim()||"DUPR Session"; x.venue=$("#st-venue").value.trim();
       x.maxCourts=Math.max(1,Math.min(12,+$("#st-courts").value||6)); x.target=Math.max(5,+$("#st-target").value||15); x.winBy=Math.max(1,+$("#st-winby").value||2); });
     toast("Settings saved."); return; }
   if(f.id==="loginForm"){
