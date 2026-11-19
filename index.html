@@ -78,13 +78,15 @@ label.f{display:grid;gap:4px;font-size:13px;color:var(--muted)}
 .courts{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));align-items:start}
 .court{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
 .court.dim{opacity:.35}
-.court-h{display:flex;align-items:baseline;gap:10px;padding:12px 14px 8px;border-bottom:1px solid var(--line)}
+.court-h{display:flex;align-items:baseline;gap:8px;padding:12px 14px 8px;border-bottom:1px solid var(--line)}
 .court-h .num{font-family:var(--display);font-weight:800;font-size:30px;line-height:.9;color:var(--lime)}
 .court-h .lbl{font-family:var(--display);font-weight:700;font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .court-h .grow{flex:1}
 .plist{list-style:none;margin:0;padding:6px 8px;display:grid;gap:2px}
 .plist li{display:flex;align-items:center;gap:8px;padding:5px 6px;border-radius:7px}
-.plist li.me{background:var(--atp-soft);box-shadow:inset 3px 0 0 var(--atp)}
+.plist li.me{background:var(--lime);color:var(--on-lime);font-weight:600}
+.plist li.me .seed,.plist li.me .dupr{color:var(--on-lime)}
+.meName{color:var(--lime);font-weight:700}
 .plist li.pick{background:var(--gold-soft);box-shadow:inset 3px 0 0 var(--gold)}
 .plist .seed{font-family:var(--display);font-weight:700;color:var(--muted);width:16px;text-align:right}
 .plist .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -93,7 +95,14 @@ label.f{display:grid;gap:4px;font-size:13px;color:var(--muted)}
 .games{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
 .game{display:grid;grid-template-columns:26px 1fr auto;gap:10px;align-items:center;padding:9px 14px;border-bottom:1px solid var(--line)}
 .game:last-child{border-bottom:0}
-.game.me{background:color-mix(in srgb,var(--atp-soft) 60%,transparent)}
+.game.me{background:color-mix(in srgb,var(--lime) 9%,transparent)}
+.qclear{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:30px;height:30px;border:0;border-radius:8px;background:none;color:var(--muted);font-size:20px;cursor:pointer}
+.search input{padding-right:38px}
+.qlist{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:15;background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,.45);padding:4px;display:grid;max-height:320px;overflow:auto}
+.qlist button{all:unset;cursor:pointer;padding:10px 12px;border-radius:7px;font-size:15px}
+.qlist button:hover,.qlist button:focus-visible,.qlist button.first{background:var(--sunk)}
+.qlist mark{background:none;color:var(--lime);font-weight:700}
+.qnone{padding:10px 12px;color:var(--muted);font-size:14px}
 .game .gno{font-family:var(--display);font-weight:700;color:var(--muted);font-size:14px}
 .teams{display:grid;gap:1px;font-size:14px;min-width:0}
 .teams .t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -155,6 +164,9 @@ td input{min-height:34px;padding:4px 8px}
 .rules ul{margin:6px 0 0;padding-left:18px;display:grid;gap:7px;color:var(--ink)}
 .rules li::marker{color:var(--lime)}
 .rules h2{font-size:20px}
+.courtmap{grid-column:1/-1}
+.courtmap img{display:block;width:100%;height:auto;border-radius:10px;margin-top:8px}
+.courtmap p{margin:10px 0 0;color:var(--ink)}
 .hrow{display:flex;gap:8px;align-items:stretch}
 .hrow .btn{align-self:center}
 .hist button[data-open]{all:unset;flex:1;min-width:0;cursor:pointer;display:flex;gap:12px;align-items:center;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
@@ -483,8 +495,9 @@ function courtsView(){
   if(s.status==="checkin"){ const names=(s.here||[]).map(id=>s.roster?.[id]?.name).filter(Boolean).sort((a,b)=>a.localeCompare(b));
     return `<div class="empty"><h2>Check-in under way</h2><p>${names.length} players checked in. Courts appear here when the host makes them.</p>${names.length?`<p style="max-width:560px;margin:10px auto 0">${names.map(esc).join(" · ")}</p>`:""}</div>`; }
   const q=search.trim().toLowerCase();
-  const matchPid = q? Object.keys(s.players).filter(p=>s.players[p].name.toLowerCase().includes(q)) : [];
-  const focusPid = matchPid.length===1?matchPid[0]:(me&&s.players[me]?me:null);
+  const matchPid = q? Object.keys(s.players).filter(p=>s.players[p].name.toLowerCase().includes(q))
+      .sort((a,b)=>{ const A=s.players[a].name.toLowerCase(), B=s.players[b].name.toLowerCase(); return (B.startsWith(q)-A.startsWith(q))||A.localeCompare(B); }) : [];
+  const focusPid = me&&s.players[me]?me:null;
   const r2c=courtsOf(s,2), r2open=r2c.filter(Boolean).length;
   let r = roundView;
   if(r===2 && !r2open) r=1;
@@ -501,33 +514,34 @@ function courtsView(){
     <div class="seg" role="group" aria-label="Round">
       <button data-round="1" aria-pressed="${r===1}">Round 1</button>
       <button data-round="2" aria-pressed="${r===2}" ${r2open?"":"disabled"}>Round 2${r2open&&r2open<courts.length?` · ${r2open}/${courts.length}`:""}</button></div>
-    <label class="search">${searchIcon}<input id="q" type="search" placeholder="Find your name" value="${esc(search)}" autocomplete="off" aria-label="Find your name"></label>
-    <span class="pill">${prog.done}/${prog.total} games in</span>
+    <div class="search">${searchIcon}<input id="q" type="text" placeholder="Find your name" value="${esc(q?search:(focusPid?pName(s,focusPid):""))}" autocomplete="off" aria-label="Find your name" aria-autocomplete="list" aria-controls="qlist">
+      ${q||focusPid?`<button class="qclear" data-act="clearMe" aria-label="Clear name">×</button>`:""}
+      ${q?`<div class="qlist" id="qlist" role="listbox">${matchPid.length?matchPid.slice(0,8).map((p,i)=>`<button role="option" class="${i===0?"first":""}" data-pickme="${p}">${hiName(s.players[p].name,q)}</button>`).join(""):`<div class="qnone">No one called “${esc(search)}” is playing.</div>`}</div>`:""}</div>
+    <span class="pill">${prog.done}/${prog.total} scores in</span>
   </div>`;
-  if(q && matchPid.length===0) html+=`<div class="banner">No one called “${esc(search)}” is playing in this session.</div>`;
-  if(q && matchPid.length===1) html+=`<div class="row"><button class="btn small" data-pickme="${matchPid[0]}">That's me, remember it</button></div>`;
-  if(q && matchPid.length>1) html+=`<div class="row">${matchPid.slice(0,8).map(p=>`<button class="btn small" data-pickme="${p}">${esc(s.players[p].name)}</button>`).join("")}</div>`;
-  if(focusPid && !q) html+=`<div class="banner info"><span class="grow">Showing <b>${esc(s.players[focusPid].name)}</b> first.</span><button class="btn small" data-act="clearMe">Show all courts</button></div>`;
+  if(focusPid && !q) html+=`<div class="banner info"><span class="grow">Showing <b>${esc(s.players[focusPid].name)}</b>'s court only.</span><button class="btn small" data-act="clearMe">Show all courts</button></div>`;
   if(r===1 && live && !roundComplete(s,1).complete) html+=`<p class="dupr" style="margin:0">Each Round 2 court opens by itself as soon as the Round 1 courts next to it finish${r2open?` (${r2open} open so far)`:""}.</p>`;
   if(isHostLike() && live) html+=`<div class="row"><button class="btn small ${swapMode?"primary":""}" data-act="swapMode">${swapMode?"Done swapping":"Swap players"}</button>${swapMode?`<span class="dupr">Tap one player, then another, to swap them. Courts that have started (a score is in) are locked.</span>`:""}</div>`;
 
   let order=courts.map((c,i)=>i);
-  if(focusPid){ const fi=courts.findIndex(c=>c&&c.includes(focusPid)); if(fi>=0) order=[fi,...order.filter(i=>i!==fi)]; }
-  html+=`<div class="courts">${order.map(ci=>courtCard(s,r,ci,focusPid,live,canSwap, q && matchPid.length>0 && !(courts[ci]||[]).some(p=>matchPid.includes(p)))).join("")}</div>`;
+  if(focusPid && !q){ const fi=courts.findIndex(c=>c&&c.includes(focusPid));
+    if(fi<0) return html+`<div class="empty"><h2>Not placed yet</h2><p>${esc(s.players[focusPid].name)}'s Round 2 court appears here once their Round 1 court and the courts next to it finish.</p><div class="row" style="justify-content:center"><button class="btn small" data-round="1">See Round 1</button></div></div>`;
+    order=[fi]; }
+  html+=`<div class="courts">${order.map(ci=>courtCard(s,r,ci,focusPid,live,canSwap,false)).join("")}</div>`;
   return html;
 }
 function isHostLike(){ return isHost; }
+function hiName(name,q){ const i=name.toLowerCase().indexOf(q); if(i<0) return esc(name); return esc(name.slice(0,i))+"<mark>"+esc(name.slice(i,i+q.length))+"</mark>"+esc(name.slice(i+q.length)); }
 
 function courtCard(s,r,ci,focusPid,live,canSwap,dim){
   const all=courtsOf(s,r), court=all[ci], n=all.length;
-  const lbl = ci===0?"Top court":ci===n-1?"Bottom court":"";
   if(!court){ const wait=feeders(s,ci).filter(i=>!r1Done(s,i)).map(i=>i+1);
-    return `<section class="court ${dim?"dim":""}" aria-label="Court ${ci+1}"><div class="court-h"><span class="num">${ci+1}</span><span class="lbl">Court ${ci+1}${lbl?" · "+lbl:""}</span><span class="grow"></span><span class="pill warn">Waiting</span></div>
+    return `<section class="court ${dim?"dim":""}" aria-label="Court ${ci+1}"><div class="court-h"><span class="lbl">Court</span><span class="num">${ci+1}</span><span class="grow"></span><span class="pill warn">Waiting</span></div>
       <p class="dupr" style="padding:14px;margin:0">Opens when Round 1 finishes on Court ${wait.join(" & ")}.</p></section>`; }
   const games=gamesFor(court);
   const hasScores=games.some((g,gi)=>s.scores?.[gkey(r,ci,gi)]);
   return `<section class="court ${dim?"dim":""}" aria-label="Court ${ci+1}">
-    <div class="court-h"><span class="num">${ci+1}</span><span class="lbl">Court ${ci+1}${lbl?" · "+lbl:""}</span><span class="grow"></span>${canSwap&&hasScores?`<span class="pill">Started · no swaps</span>`:`<span class="dupr">${court.length} players</span>`}</div>
+    <div class="court-h"><span class="lbl">Court</span><span class="num">${ci+1}</span><span class="grow"></span>${canSwap&&hasScores?`<span class="pill">Started · no swaps</span>`:""}</div>
     <ol class="plist">${court.map((p,i)=>`<li class="${p===focusPid?"me":""} ${swapPick?.pid===p?"pick":""}"><span class="seed">${i+1}</span>
       ${canSwap&&!hasScores?`<button class="swap" data-swap="${p}" data-ci="${ci}" data-r="${r}">${esc(pName(s,p))}</button>`:`<span class="nm">${esc(pName(s,p))}</span>`}
       <span class="dupr">${rating(s.players[p]?.rating)}</span></li>`).join("")}</ol>
@@ -536,7 +550,8 @@ function courtCard(s,r,ci,focusPid,live,canSwap,dim){
 }
 function gameRow(s,r,ci,gi,g,focusPid,live){
   const k=gkey(r,ci,gi), sc=s.scores?.[k];
-  const tA=g.a.map(p=>esc(pName(s,p))).join(" & "), tB=g.b.map(p=>esc(pName(s,p))).join(" & ");
+  const nm=p=>p===focusPid?`<b class="meName">${esc(pName(s,p))}</b>`:esc(pName(s,p));
+  const tA=g.a.map(nm).join(" & "), tB=g.b.map(nm).join(" & ");
   const mine=focusPid&&(g.a.includes(focusPid)||g.b.includes(focusPid));
   const aw=sc&&sc.a>sc.b;
   let right;
@@ -547,7 +562,7 @@ function gameRow(s,r,ci,gi,g,focusPid,live){
   else right=`<span class="dupr">—</span>`;
   return `<li class="game ${mine?"me":""}"><span class="gno">G${gi+1}</span>
     <div class="teams"><span class="t ${sc?(aw?"win":"lose"):""}">${tA}</span><span class="t ${sc?(aw?"lose":"win"):""}">${tB}</span>
-    ${g.sit?`<span class="sit">Sits out: ${esc(pName(s,g.sit))}</span>`:""}</div>${right}</li>`;
+    ${g.sit?`<span class="sit">Sits out: ${nm(g.sit)}</span>`:""}</div>${right}</li>`;
 }
 
 function standingsView(){
@@ -558,7 +573,7 @@ function standingsView(){
       <span class="dupr">Ranked by wins, then points difference, then points won. Top 2 move up, bottom 2 move down for Round 2.</span></div>`;
   html+=`<div class="courts">${(s.courts["r"+r]||[]).map((c,ci)=>{
     const rows=courtStandings(s,r,ci);
-    return `<section class="court"><div class="court-h"><span class="num">${ci+1}</span><span class="lbl">Court ${ci+1}</span></div>
+    return `<section class="court"><div class="court-h"><span class="lbl">Court</span><span class="num">${ci+1}</span></div>
      <div class="tablewrap"><table class="stand"><thead><tr><th>#</th><th>Player</th><th class="n">W</th><th class="n">L</th><th class="n">+/−</th>${r===1&&r1Done(s,ci)?"<th>Next</th>":""}</tr></thead><tbody>
      ${rows.map((x,i)=>{const d=x.pf-x.pa; const mv=r===1&&r1Done(s,ci)?movement(s,ci,i,rows.length):null;
        return `<tr class="${x.pid===me?"me":""}"><td class="pos">${i+1}</td><td>${esc(pName(s,x.pid))}</td><td class="n">${x.w}</td><td class="n">${x.l}</td><td class="n">${d>0?"+":""}${d}</td>${mv?`<td><span class="mv ${mv[0]}">${mv[1]}</span></td>`:""}</tr>`}).join("")}
@@ -582,6 +597,9 @@ function rulesView(){
     `Up to ${mc*5} players on ${mc} courts, 4 or 5 players per court. With fewer players, some courts close or drop to 4.`,
     `Courts are set by DUPR doubles rating from your OpenSports registration. The highest-rated players start on Court 1.`,
     `Two rounds. Your Round 1 result decides your Round 2 court.`])}
+  <section class="card rules courtmap"><h2>Court layout</h2>
+    <img src="images/court-layout.jpg" alt="Map of the six courts: Courts 1, 2 and 3 in the right-hand column from bottom to top, Courts 4, 5 and 6 in the left-hand column from bottom to top." loading="lazy" width="1200" height="800">
+    <p>Courts 1 to 3 are on the right, with Court 1 at the bottom. Courts 4 to 6 are on the left, with Court 4 at the bottom.</p></section>
   ${sec("Games",[
     `Doubles, rally scoring. Games to <b>${tgt}</b>, win by <b>${wb}</b>.`,
     `5 on a court: 5 games. You play 4, sit out 1, and partner each other player once.`,
@@ -763,7 +781,7 @@ document.addEventListener("click",async e=>{
   const d=t.dataset;
   if(d.tab){ tab=d.tab; ls.set("ladder-tab",tab); swapMode=false; swapPick=null; render(); window.scrollTo(0,0); return; }
   if(d.round){ roundView=+d.round; render(); return; }
-  if(d.pickme){ me=d.pickme; ls.set("ladder-me",me); search=""; render(); return; }
+  if(d.pickme){ me=d.pickme; ls.set("ladder-me",me); search=""; roundView=null; document.activeElement?.blur?.(); render(); return; }
   if(d.csv){ const id=d.csv; const sx=id===viewSid&&SESS?SESS:await store.getSession(id); if(!sx){toast("Couldn't load that session.");return} openDuprExport(sx); return; }
   if(d.open){ viewSid=d.open; roundView=null; store.watch(viewSid); tab="courts"; render(); return; }
   if(d.enter||d.edit){ const k=d.enter||d.edit; const sc=SESS.scores?.[k]; modal={kind:"score",k,r:+d.r,ci:+d.ci,gi:+d.gi,a:sc?String(sc.a):"",b:sc?String(sc.b):"",host:!!d.edit}; renderModal(); setTimeout(()=>$("#sc-a")?.focus(),0); return; }
@@ -784,7 +802,7 @@ document.addEventListener("click",async e=>{
   if(a==="closeModal"){ modal=null; renderModal(); return; }
   if(a==="createSeries"){ try{ await store.saveSeries(clone(SERIES_DEFAULT)); tab="host"; render(); toast("Set up. Add players under Host."); }catch(e){ toast("Couldn't create it. Check the Firestore rules are published."); } return; }
   if(a==="toCurrent"){ viewSid=SERIES.current; roundView=null; store.watch(viewSid); render(); return; }
-  if(a==="clearMe"){ me=""; ls.del("ladder-me"); render(); return; }
+  if(a==="clearMe"){ me=""; search=""; ls.del("ladder-me"); render(); return; }
   if(a==="swapMode"){ swapMode=!swapMode; swapPick=null; render(); return; }
   if(a==="demoReset"){ armed(t,"Tap again to reset",()=>{ store.reset(); roundView=null; toast("Demo reset."); }); return; }
   if(a==="showLogin"){ modal={kind:"login"}; loginMsg=""; renderModal(); setTimeout(()=>$("#lg-email")?.focus(),0); return; }
@@ -880,7 +898,8 @@ document.addEventListener("submit",async e=>{
     catch(err){ loginMsg=/invalid|wrong|not-found|credential/.test(err.code||"")?"That email and password don't match. Try again or use Forgot password.":"Couldn't log in: "+(err.code||err.message); renderModal(); $("#lg-email").value=em; }
   }
 });
-document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&modal&&!modal.busy){ modal=null; renderModal(); } });
+document.addEventListener("keydown",e=>{
+  if(e.target.id==="q"&&e.key==="Enter"){ const f=document.querySelector(".qlist button.first"); if(f){ e.preventDefault(); f.click(); } return; } if(e.key==="Escape"&&modal&&!modal.busy){ modal=null; renderModal(); } });
 
 /* ---------- CSV ---------- */
 const csvCell=v=>{ const s=String(v??""); return /[",\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s; };
