@@ -1,14 +1,14 @@
-// Firebase settings for ATP DUPR Session (project: atp-dupr-sessions).
+// Firebase settings for ATP DUPR Session (project: atp-sessions, shared with Kings & Queens).
 // These values are not secret: the Firestore rules decide who can change things.
 
 export const firebaseConfig = {
-  apiKey: "AIzaSyAIaaiH_v9KRoCb9PEsQ5gKy0J4QQetdm8",
-  authDomain: "atp-dupr-sessions.firebaseapp.com",
-  projectId: "atp-dupr-sessions",
-  storageBucket: "atp-dupr-sessions.firebasestorage.app",
-  messagingSenderId: "111557656014",
-  appId: "1:111557656014:web:bc0b940102109cee0ebf9f"
+  apiKey: "AIzaSyDrsz0HQYETQqgJ2xPsq7tMBAFLN8BVWdY",
+  authDomain: "atp-sessions.firebaseapp.com",
+  projectId: "atp-sessions",
+  storageBucket: "atp-sessions.firebasestorage.app",
+  messagingSenderId: "1092892280782",
+  appId: "1:1092892280782:web:b63f70a5cb90549b53cd9f"
 };
 
-// Where the sessions are saved in the database.
+// Where DUPR Session saves its data in the database.
 export const SESSION_COLLECTION = "duprsession";

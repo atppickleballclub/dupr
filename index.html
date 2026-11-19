@@ -130,7 +130,7 @@ table.stand th:last-child:not(.n),table.stand td:last-child:not(.n){text-align:c
 table.stand td:nth-child(2){overflow:hidden;text-overflow:ellipsis}
 td input{min-height:34px;padding:4px 8px}
 .mv{font-family:var(--display);font-weight:700;font-size:13px;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:5px;white-space:nowrap}
-.mv.up{background:var(--up-soft);color:var(--up)} .mv.down{background:var(--red-soft);color:var(--red)} .mv.stay{background:var(--sunk);color:var(--muted)}
+.mv.up{background:var(--up-soft);color:var(--up)} .mv.down{background:var(--atp-soft);color:var(--atp)} .mv.stay{background:var(--sunk);color:var(--muted)}
 .pos{font-family:var(--display);font-weight:800;font-size:17px}
 
 .checkin{display:grid;gap:6px;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));max-height:440px;overflow:auto;padding:2px}
@@ -149,6 +149,10 @@ td input{min-height:34px;padding:4px 8px}
 .empty{color:var(--muted);text-align:center;padding:40px 16px;border:1px dashed var(--line);border-radius:14px}
 .empty h2{font-family:var(--display);color:var(--ink);text-transform:uppercase;margin:0 0 6px}
 .hist{display:grid;gap:8px}
+.rulesgrid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));align-items:start}
+.rules ul{margin:6px 0 0;padding-left:18px;display:grid;gap:7px;color:var(--ink)}
+.rules li::marker{color:var(--lime)}
+.rules h2{font-size:20px}
 .hrow{display:flex;gap:8px;align-items:stretch}
 .hrow .btn{align-self:center}
 .hist button[data-open]{all:unset;flex:1;min-width:0;cursor:pointer;display:flex;gap:12px;align-items:center;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
@@ -208,7 +212,7 @@ const ROT = {
 
 const SERIES_DEFAULT = {
   name:"DUPR Session", venue:"Jonas Bradley Park", day:"", start:"",
-  maxCourts:6, target:11, winBy:2, players:{}, sessions:{}, current:null
+  maxCourts:6, target:15, winBy:2, players:{}, sessions:{}, current:null
 };
 
 /* ---------- state ---------- */
@@ -326,17 +330,17 @@ function demoSeed(){
   // last week: 30 players, finished
   const lw=new Date(); lw.setDate(lw.getDate()-7);
   const lwISO=`${lw.getFullYear()}-${String(lw.getMonth()+1).padStart(2,"0")}-${String(lw.getDate()).padStart(2,"0")}`;
-  const past={id:"s-"+lwISO,date:lwISO,status:"checkin",roster:Object.fromEntries(ids.slice(0,30).map(k=>[k,clone(base[k])])),here:ids.slice(0,30),players:{},courts:{},scores:{},target:11,winBy:2};
+  const past={id:"s-"+lwISO,date:lwISO,status:"checkin",roster:Object.fromEntries(ids.slice(0,30).map(k=>[k,clone(base[k])])),here:ids.slice(0,30),players:{},courts:{},scores:{},target:15,winBy:2};
   makeRound1(past,series);
-  let n=0; const fill=r=>past.courts["r"+r].forEach((c,ci)=>gamesFor(c).forEach((g,gi)=>{ n++; const l=(n*53)%10; past.scores[gkey(r,ci,gi)]=(n%3)?{a:11,b:l}:{a:l,b:11}; }));
+  let n=0; const fill=r=>past.courts["r"+r].forEach((c,ci)=>gamesFor(c).forEach((g,gi)=>{ n++; const l=(n*53)%14; past.scores[gkey(r,ci,gi)]=(n%3)?{a:15,b:l}:{a:l,b:15}; }));
   fill(1); past.courts.r2=moveForRound2(past); past.status="r2"; fill(2); past.status="done";
   // today: 30 checked in from the OpenSports list with this week's ratings, Round 1 under way
   const wk=[...ids.slice(0,26),...ids.slice(28,32)], roster={};
   wk.forEach((id,i)=>{ const p=clone(base[id]); p.rating=+(p.rating+(((i*29)%9)-4)*0.012).toFixed(3); roster[id]=p; });
   const sid="s-"+todayISO();
-  const sess={id:sid,date:todayISO(),status:"checkin",roster,here:[...wk],players:{},courts:{},scores:{},target:11,winBy:2};
+  const sess={id:sid,date:todayISO(),status:"checkin",roster,here:[...wk],players:{},courts:{},scores:{},target:15,winBy:2};
   makeRound1(sess,series);
-  sess.courts.r1.forEach((c,ci)=>gamesFor(c).forEach((g,gi)=>{ if(ci===3||(ci<3&&gi>1)) return; const l=((ci*5+gi+1)*53)%9; sess.scores[gkey(1,ci,gi)]=((ci+gi)%3)?{a:11,b:l}:{a:l,b:11}; }));
+  sess.courts.r1.forEach((c,ci)=>gamesFor(c).forEach((g,gi)=>{ if(ci===3||(ci<3&&gi>1)) return; const l=((ci*5+gi+1)*53)%14; sess.scores[gkey(1,ci,gi)]=((ci+gi)%3)?{a:15,b:l}:{a:l,b:15}; }));
   series.sessions[past.id]={date:past.date,status:"done",count:30};
   series.sessions[sid]={date:sess.date,status:"r1",count:30};
   series.current=sid;
@@ -347,11 +351,11 @@ function makeRound1(sess, series){
   sess.players={}; sess.here.forEach(p=>{const x=sess.roster?.[p]||{name:"Unknown"}; sess.players[p]={name:x.name,dupr:x.dupr||"",rating:x.rating??null};});
   const sorted=[...sess.here].sort((a,b)=>(Number(sess.players[b].rating)||0)-(Number(sess.players[a].rating)||0)||sess.players[a].name.localeCompare(sess.players[b].name));
   const courts=[]; let k=0; plan.sizes.forEach(sz=>{courts.push(sorted.slice(k,k+sz)); k+=sz;});
-  sess.courts={r1:courts}; sess.scores={}; sess.status="r1"; sess.target=+series.target||11; sess.winBy=+series.winBy||2;
+  sess.courts={r1:courts}; sess.scores={}; sess.status="r1"; sess.target=+series.target||15; sess.winBy=+series.winBy||2;
   return plan;
 }
 
-const DEMO_KEY="atp-dupr-demo-v6";
+const DEMO_KEY="atp-dupr-demo-v7";
 function localStore(){
   let db=null; try{db=JSON.parse(ls.get(DEMO_KEY)||"null")}catch(e){}
   if(!db||!db.series) db=demoSeed();
@@ -393,7 +397,9 @@ async function firebaseStore(cfg){
         const list=(c.data()?.emails||[]).map(x=>String(x).trim().toLowerCase());
         isHost=list.includes(u.email.toLowerCase());
         if(!isHost) hostReason=`${u.email} isn't on the committee list (Firebase → config → committee → emails).`;
-      }catch(e){ hostReason="Couldn't check the committee list. Check the Firestore rules are published."; } }
+      }catch(e){ hostReason = e?.code==="permission-denied"
+          ? `${u.email} isn't on the committee list (Firebase → config → committee → emails). Emails must match exactly, in lower case.`
+          : "Couldn't check the committee list. Check your connection, and that the Firestore rules are published."; } }
     scheduleRender();
   });
   return {
@@ -431,7 +437,7 @@ function render(){
 function header(){
   const s=SESS, st=s?.status;
   const status = !s ? "" : st==="checkin"?`<span class="pill warn">Check-in</span>`:st==="done"?`<span class="pill">Final</span>`:(()=>{ const o=courtsOf(s,2).filter(Boolean).length, n=s.courts?.r1?.length||0; return o===0?`<span class="pill live">Round 1 live</span>`:o===n?`<span class="pill live">Round 2 live</span>`:`<span class="pill live">Round 2 · ${o}/${n} courts</span>`; })();
-  const tabs=[["courts","Courts"],["standings","Standings"],["history","History"]];
+  const tabs=[["courts","Courts"],["standings","Standings"],["rules","Rules"],["history","History"]];
   if(isHost) tabs.push(["host","Host"]);
   return `<header class="top"><div class="wrap">
     <div class="brand"><div class="logo" role="img" aria-label="ATP Pickleball Club"></div>
@@ -455,10 +461,11 @@ function view(){
       : `<div class="empty"><h2>Not set up yet</h2><p>A committee member needs to log in and create it.</p>${hostLoginCard()}</div>`;
   } else if(tab==="courts") body=courtsView();
   else if(tab==="standings") body=standingsView();
+  else if(tab==="rules") body=rulesView();
   else if(tab==="history") body=historyView();
   else if(tab==="host") body=hostView();
   return header()+`<main class="wrap">${banners.join("")}${body}</main>
-   <footer class="wrap">ATP Pickleball Club · Games to ${SESS?.target||SERIES?.target||11}, win by ${SESS?.winBy||SERIES?.winBy||2}, rally scoring
+   <footer class="wrap">ATP Pickleball Club
    ${MODE==="live"&&userEmail?` · Logged in as ${esc(userEmail)}`:""}</footer>`;
 }
 
@@ -565,6 +572,41 @@ function finalTable(s){
    </tbody></table></div></section>`;
 }
 
+function rulesView(){
+  const tgt=SESS?.target||SERIES?.target||15, wb=SESS?.winBy||SERIES?.winBy||2, mc=SERIES?.maxCourts||6;
+  const sec=(h,items)=>`<section class="card rules"><h2>${h}</h2><ul>${items.map(i=>`<li>${i}</li>`).join("")}</ul></section>`;
+  return `<div class="rulesgrid">
+  ${sec("The session",[
+    `Up to ${mc*5} players on ${mc} courts, 4 or 5 players per court. With fewer players, some courts close or drop to 4.`,
+    `Courts are set by DUPR doubles rating from your OpenSports registration. The highest-rated players start on Court 1.`,
+    `Two rounds. Your Round 1 result decides your Round 2 court.`])}
+  ${sec("Games",[
+    `Doubles, rally scoring. Games to <b>${tgt}</b>, win by <b>${wb}</b>.`,
+    `5 on a court: 5 games. You play 4, sit out 1, and partner each other player once.`,
+    `4 on a court: 3 games. You partner each other player once.`,
+    `Play the games in order (G1, G2…). Your court card shows who's playing and who sits out.`])}
+  ${sec("Serving (rally scoring)",[
+    `A point is scored on every rally, by whichever team wins it.`,
+    `Serve from the <b>right</b> when the serving team's score is even (0, 2, 4…) and from the <b>left</b> when it's odd (1, 3, 5…).`,
+    `If the serving team wins the point, the server switches sides and serves again.`,
+    `If the receiving team wins the point, they win the serve. The player standing on the side that matches their team's new score serves.`,
+    `Only one server per team turn. There's no second server like in side-out scoring.`])}
+  ${sec("Entering scores",[
+    `Any player in the game can enter the score: tap <b>Enter score</b> on the game.`,
+    `Check the score with the other team before you submit. Once it's in, it locks.`,
+    `If a score is wrong, tell the host. Only a host can change it.`])}
+  ${sec("Standings",[
+    `Each court is ranked by games won, then points difference (points won minus points lost), then points won.`,
+    `When all of a court's Round 1 games are in, the Standings tab shows who moves up, who moves down and who stays.`])}
+  ${sec("Round 2",[
+    `The top 2 on each court move up a court and the bottom 2 move down. Everyone else stays.`,
+    `Court 1's top 2 stay on Court 1, and the bottom court's bottom 2 stay there.`,
+    `Each Round 2 court opens as soon as the Round 1 courts that feed it finish, so you may start before other courts are done.`])}
+  ${sec("DUPR",[
+    `Every game is submitted to DUPR after the session, so make sure your DUPR ID on OpenSports is right.`,
+    `Results can take a little while to show in your DUPR app.`])}
+  </div>`;
+}
 function historyView(){
   const list=Object.entries(SERIES.sessions||{}).sort((a,b)=>b[1].date.localeCompare(a[1].date)||b[0].localeCompare(a[0]));
   if(!list.length) return `<div class="empty"><h2>No sessions yet</h2><p>Every session is kept here once it's run.</p></div>`;
@@ -663,13 +705,13 @@ function renderModal(){
   if(modal.kind==="score") el.innerHTML=scoreModal();
   else if(modal.kind==="text") el.innerHTML=`<div class="modal-bg" data-close><div class="modal wide" role="dialog" aria-modal="true"><h2>${esc(modal.title)}</h2><p class="muted">${esc(modal.note||"")}</p><textarea id="mtext" readonly style="min-height:260px">${esc(modal.text)}</textarea><div class="row" style="margin-top:10px"><button class="btn primary" data-act="copyText">Copy</button><button class="btn" data-act="downloadText">Download CSV</button><button class="btn ghost" data-act="closeModal">Close</button></div></div></div>`;
   else if(modal.kind==="login") el.innerHTML=`<div class="modal-bg" data-close><div class="modal" role="dialog" aria-modal="true"><h2>Host login</h2><p class="muted">${MODE==="demo"?"Demo: use any email and the password <b>demo</b>.":"For committee members running the session."}</p>
-    <form id="loginForm" style="display:grid;gap:10px"><label class="f">Email<input id="lg-email" data-keep type="email" autocomplete="username" required></label><label class="f">Password<input id="lg-pass" data-keep type="password" autocomplete="current-password" required></label>
+    <form id="loginForm" novalidate style="display:grid;gap:10px"><label class="f">Email<input id="lg-email" data-keep type="email" autocomplete="username" ${MODE==="demo"?'placeholder="Any email, or leave blank"':""}></label><label class="f">Password<input id="lg-pass" data-keep type="password" autocomplete="current-password" required></label>
     <div class="msg ${loginMsg&&/match|Couldn/.test(loginMsg)?"bad":""}">${esc(loginMsg)}</div>
     <div class="row"><button class="btn primary" type="submit">Log in</button><button class="btn ghost" type="button" data-act="forgot">Forgot password</button><button class="btn ghost" type="button" data-act="closeModal">Cancel</button></div></form></div></div>`;
 }
 function scoreModal(){
   const m=modal, s=SESS; const g=gamesFor(courtsOf(s,m.r)[m.ci]||[])[m.gi]; if(!g){ modal=null; return ""; }
-  const tgt=s.target||11, wb=s.winBy||2;
+  const tgt=s.target||15, wb=s.winBy||2;
   const a=m.a===""?NaN:+m.a, b=m.b===""?NaN:+m.b;
   const err=(m.a===""||m.b==="")?"":validScore(a,b,tgt,wb);
   const ok=m.a!==""&&m.b!==""&&!err;
@@ -721,7 +763,7 @@ document.addEventListener("click",async e=>{
   if(d.csv){ const id=d.csv; const sx=id===viewSid&&SESS?SESS:await store.getSession(id); if(!sx){toast("Couldn't load that session.");return} openDuprExport(sx); return; }
   if(d.open){ viewSid=d.open; roundView=null; store.watch(viewSid); tab="courts"; render(); return; }
   if(d.enter||d.edit){ const k=d.enter||d.edit; const sc=SESS.scores?.[k]; modal={kind:"score",k,r:+d.r,ci:+d.ci,gi:+d.gi,a:sc?String(sc.a):"",b:sc?String(sc.b):"",host:!!d.edit}; renderModal(); setTimeout(()=>$("#sc-a")?.focus(),0); return; }
-  if(d.step){ const side=d.step; const cur=modal[side]===""?(+d.d>0?(SESS.target||11)-1:0):+modal[side]; modal[side]=String(Math.max(0,cur+(+d.d))); renderModal(); return; }
+  if(d.step){ const side=d.step; const cur=modal[side]===""?(+d.d>0?(SESS.target||15)-1:0):+modal[side]; modal[side]=String(Math.max(0,cur+(+d.d))); renderModal(); return; }
   if(d.here){ const id=d.here; await saveBoth(x=>{ const h=new Set(x.here||[]); h.has(id)?h.delete(id):h.add(id); x.here=[...h]; }); return; }
   if(d.swap){ const pid=d.swap, ci=+d.ci;
     if(!swapPick){ swapPick={pid,ci}; render(); return; }
@@ -766,7 +808,7 @@ document.addEventListener("click",async e=>{
   if(a==="newSession"||a==="nextNight"){
     if(a==="nextNight"){ viewSid=null; store.watch(null); tab="host"; render(); return; }
     const date=$("#newDate")?.value||todayISO(); let id="s-"+date, n=2; while(SERIES.sessions[id]) id=`s-${date}-${n++}`;
-    const sess={id,date,status:"checkin",roster:{},here:[],players:{},courts:{},scores:{},target:+SERIES.target||11,winBy:+SERIES.winBy||2};
+    const sess={id,date,status:"checkin",roster:{},here:[],players:{},courts:{},scores:{},target:+SERIES.target||15,winBy:+SERIES.winBy||2};
     await store.saveSession(sess);
     await saveSeries(x=>{ x.sessions[id]=sessSummary(sess); x.current=id; });
     viewSid=id; store.watch(id); toast("Check-in open."); return; }
@@ -781,7 +823,7 @@ document.addEventListener("click",async e=>{
   if(a==="finish"){ const p=roundComplete(SESS,2);
     armed(t,p.complete?"Tap again to finish":`${p.total-p.done} games unscored. Tap again to finish`,async()=>{ await saveBoth(x=>{x.status="done";}); tab="courts"; roundView=2; render(); toast("Session finished."); }); return; }
   if(a==="reopen"){ await saveBoth(x=>{x.status="r1";}); return; }
-  if(a==="demoFill"){ const r=roundComplete(SESS,1).complete?2:1; await saveSession(x=>{ courtsOf(x,r).forEach((c,ci)=>c&&gamesFor(c).forEach((g,gi)=>{ const k=gkey(r,ci,gi); if(x.scores[k]) return; const l=Math.floor(Math.random()*10); x.scores[k]=Math.random()<.5?{a:11,b:l}:{a:l,b:11}; })); }); toast("Test scores added."); return; }
+  if(a==="demoFill"){ const r=roundComplete(SESS,1).complete?2:1; await saveSession(x=>{ courtsOf(x,r).forEach((c,ci)=>c&&gamesFor(c).forEach((g,gi)=>{ const k=gkey(r,ci,gi); if(x.scores[k]) return; const T=+x.target||15, l=Math.floor(Math.random()*(T-1)); x.scores[k]=Math.random()<.5?{a:T,b:l}:{a:l,b:T}; })); }); toast("Test scores added."); return; }
   if(a==="exportDupr"){ openDuprExport(SESS); return; }
 
   // players
@@ -820,12 +862,13 @@ document.addEventListener("submit",async e=>{
     toast(`${name} added and checked in.`); return; }
   if(f.id==="settings"){
     await saveSeries(x=>{ x.name=$("#st-name").value.trim()||"DUPR Session"; x.venue=$("#st-venue").value.trim(); x.day=$("#st-day").value;
-      x.maxCourts=Math.max(1,Math.min(12,+$("#st-courts").value||6)); x.target=Math.max(5,+$("#st-target").value||11); x.winBy=Math.max(1,+$("#st-winby").value||2); });
+      x.maxCourts=Math.max(1,Math.min(12,+$("#st-courts").value||6)); x.target=Math.max(5,+$("#st-target").value||15); x.winBy=Math.max(1,+$("#st-winby").value||2); });
     toast("Settings saved."); return; }
   if(f.id==="loginForm"){
     const em=$("#lg-email").value.trim(), pw=$("#lg-pass").value;
-    if(MODE==="demo"){ if(pw!=="demo"){ loginMsg="That email and password don't match. In the demo the password is demo."; renderModal(); $("#lg-email").value=em; return; }
+    if(MODE==="demo"){ if(pw.trim().toLowerCase()!=="demo"){ loginMsg="That email and password don't match. In the demo the password is demo."; renderModal(); $("#lg-email").value=em; return; }
       isHost=true; ls.set("dupr-demo-host","1"); modal=null; loginMsg=""; renderModal(); tab="host"; render(); toast("Logged in as host."); return; }
+    if(!em||!pw){ loginMsg="Enter your email and password."; renderModal(); $("#lg-email").value=em; return; }
     loginMsg="Logging in…"; renderModal();
     try{ await store.A.signInWithEmailAndPassword(store.auth,em,pw); modal=null; loginMsg=""; renderModal(); toast("Logged in."); tab="host"; render(); }
     catch(err){ loginMsg=/invalid|wrong|not-found|credential/.test(err.code||"")?"That email and password don't match. Try again or use Forgot password.":"Couldn't log in: "+(err.code||err.message); renderModal(); $("#lg-email").value=em; }
