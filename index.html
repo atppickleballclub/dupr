@@ -96,6 +96,11 @@ label.f{display:grid;gap:4px;font-size:13px;color:var(--muted)}
 .game{display:grid;grid-template-columns:26px 1fr auto;gap:10px;align-items:center;padding:9px 14px;border-bottom:1px solid var(--line)}
 .game:last-child{border-bottom:0}
 .game.me{background:color-mix(in srgb,var(--lime) 9%,transparent)}
+.mysum{display:flex;gap:12px;align-items:center;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--lime);border-radius:12px;padding:12px 14px}
+.mysum.warn{border-left-color:var(--gold)} .mysum.down{border-left-color:var(--atp)} .mysum.stay{border-left-color:var(--muted)}
+.mysum .grow{flex:1;min-width:200px}
+.mysum-main{font-family:var(--display);font-weight:800;font-size:22px;text-transform:uppercase;letter-spacing:.02em;line-height:1.1}
+.mysum-sub{color:var(--muted);font-size:14px;margin-top:3px}
 .qclear{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:30px;height:30px;border:0;border-radius:8px;background:none;color:var(--muted);font-size:20px;cursor:pointer}
 .search input{padding-right:38px}
 .qlist{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:15;background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,.45);padding:4px;display:grid;max-height:320px;overflow:auto}
@@ -375,7 +380,7 @@ function makeRound1(sess, series){
   return plan;
 }
 
-const DEMO_KEY="atp-dupr-demo-v7";
+const DEMO_KEY="atp-dupr-demo-v8";
 function localStore(){
   let db=null; try{db=JSON.parse(ls.get(DEMO_KEY)||"null")}catch(e){}
   if(!db||!db.series) db=demoSeed();
@@ -525,7 +530,10 @@ function courtsView(){
       ${q?`<div class="qlist" id="qlist" role="listbox">${matchPid.length?matchPid.slice(0,8).map((p,i)=>`<button role="option" class="${i===0?"first":""}" data-pickme="${p}">${hiName(s.players[p].name,q)}</button>`).join(""):`<div class="qnone">No one called “${esc(search)}” is playing.</div>`}</div>`:""}</div>
     <span class="pill">${prog.done}/${prog.total} scores in</span>
   </div>`;
-  if(focusPid && !q) html+=`<div class="banner info"><span class="grow">Showing <b>${esc(s.players[focusPid].name)}</b>'s court only.</span><button class="btn small" data-act="clearMe">Show all courts</button></div>`;
+  if(focusPid && !q && s.status!=="checkin"){ const m=mySummary(s,r,focusPid);
+    html+=`<div class="mysum ${m.tone||""}"><div class="grow"><div class="mysum-main">${m.main}</div>${m.sub?`<div class="mysum-sub">${m.sub}</div>`:""}</div><button class="btn small" data-act="clearMe">Show all courts</button></div>`; }
+  else if(!focusPid && !q && r===1 && live && r2open && !roundComplete(s,1).complete){
+    html+=`<div class="banner info"><span class="grow">Round 2 has started on ${listCourts(r2c.map((c,i)=>c?i:-1).filter(i=>i>=0))}.</span><button class="btn small" data-round="2">See Round 2</button></div>`; }
   if(r===1 && live && !roundComplete(s,1).complete) html+=`<p class="dupr" style="margin:0">Each Round 2 court opens by itself as soon as the Round 1 courts next to it finish${r2open?` (${r2open} open so far)`:""}.</p>`;
   if(isHostLike() && live) html+=`<div class="row"><button class="btn small ${swapMode?"primary":""}" data-act="swapMode">${swapMode?"Done swapping":"Swap players"}</button>${swapMode?`<span class="dupr">Tap one player, then another, to swap them. Courts that have started (a score is in) are locked.</span>`:""}</div>`;
 
@@ -537,8 +545,47 @@ function courtsView(){
   return html;
 }
 function isHostLike(){ return isHost; }
+/* Round 1 courts that Round 2 court k is still waiting on. */
+const waitingOn=(s,k)=>feeders(s,k).filter(i=>!r1Done(s,i));
+const listCourts=a=>a.length===1?`Court ${a[0]+1}`:`Courts ${a.slice(0,-1).map(i=>i+1).join(", ")} & ${a[a.length-1]+1}`;
+const ordinal=n=>n+(["th","st","nd","rd"][((n%100-20)%10+10)%10<4&&(n%100<11||n%100>13)?((n%100-20)%10+10)%10:0]||"th");
+/* The pinned player's status line: next game, sitting out, or where they move after Round 1. */
+function mySummary(s,r,pid){
+  const courts=courtsOf(s,r), ci=courts.findIndex(c=>c&&c.includes(pid));
+  const name=esc(s.players[pid].name);
+  if(ci<0){ // Round 2 court not open yet
+    const c1=s.courts.r1.findIndex(c=>c.includes(pid));
+    return {main:`Round 2 · not placed yet`, sub:`Waiting for Round 1 to finish on ${listCourts(waitingOn(s,Math.max(0,c1)) .length?waitingOn(s,c1):[c1])}.`, tone:"warn"};
+  }
+  const games=gamesFor(courts[ci]);
+  const next=games.findIndex((g,gi)=>!s.scores?.[gkey(r,ci,gi)]);
+  const head=`Round ${r} · Court ${ci+1}`;
+  if(next>=0){
+    const g=games[next];
+    if(g.sit===pid) return {main:`${head} · Sitting out Game ${next+1}`, sub:`Back on for Game ${next+2}.`};
+    const myLeft=games.slice(next).some(x=>x.a.includes(pid)||x.b.includes(pid));
+    if(!myLeft) return {main:`${head} · Your games are done`, sub:`Waiting for Game ${next+1} to finish on your court.`};
+    const partner=[...g.a,...g.b].includes(pid)?(g.a.includes(pid)?g.a:g.b).find(x=>x!==pid):null;
+    return {main:`${head} · Game ${next+1} up next`, sub:partner?`You're with ${esc(pName(s,partner))}.`:""};
+  }
+  // court finished
+  const rows=courtStandings(s,r,ci), pos=rows.findIndex(x=>x.pid===pid);
+  if(r===2) return {main:`${head} · All done`, sub:`You finished ${ordinal(pos+1)} on Court ${ci+1}. Thanks for playing!`, tone:"ok"};
+  const [kind]=movement(s,ci,pos,rows.length), n=s.courts.r1.length;
+  const to = kind==="up"?ci-1:kind==="down"?ci+1:ci;
+  const verb = kind==="up"?`Moving up to Court ${to+1}`:kind==="down"?`Moving down to Court ${to+1}`:`Staying on Court ${to+1}`;
+  const wait=waitingOn(s,to);
+  return {main:`Round 1 done · ${verb}`, sub: wait.length?`You finished ${ordinal(pos+1)}. Round 2 Court ${to+1} starts when ${listCourts(wait)} ${wait.length===1?"finishes":"finish"}.`:`You finished ${ordinal(pos+1)}. Round 2 Court ${to+1} is open.`, tone:kind};
+}
 function hiName(name,q){ const i=name.toLowerCase().indexOf(q); if(i<0) return esc(name); return esc(name.slice(0,i))+"<mark>"+esc(name.slice(i,i+q.length))+"</mark>"+esc(name.slice(i+q.length)); }
 
+function courtPill(s,r,ci,live){
+  if(!live) return "";
+  if(r===2) return gamesFor(courtsOf(s,2)[ci]||[]).every((g,gi)=>s.scores?.[gkey(2,ci,gi)])?`<span class="pill">Finished</span>`:"";
+  if(!r1Done(s,ci)) return "";
+  const wait=[...new Set([ci-1,ci,ci+1].filter(k=>k>=0&&k<s.courts.r1.length).flatMap(k=>waitingOn(s,k)))].sort((a,b)=>a-b);
+  return wait.length?`<span class="pill warn" title="Some players from this court can't start Round 2 yet">Finished · waiting on ${listCourts(wait)}</span>`:`<span class="pill">Finished</span>`;
+}
 function courtCard(s,r,ci,focusPid,live,canSwap,dim){
   const all=courtsOf(s,r), court=all[ci], n=all.length;
   if(!court){ const wait=feeders(s,ci).filter(i=>!r1Done(s,i)).map(i=>i+1);
@@ -547,7 +594,7 @@ function courtCard(s,r,ci,focusPid,live,canSwap,dim){
   const games=gamesFor(court);
   const hasScores=games.some((g,gi)=>s.scores?.[gkey(r,ci,gi)]);
   return `<section class="court ${dim?"dim":""}" aria-label="Court ${ci+1}">
-    <div class="court-h"><span class="lbl">Court</span><span class="num">${ci+1}</span><span class="grow"></span>${canSwap&&hasScores?`<span class="pill">Started · no swaps</span>`:""}</div>
+    <div class="court-h"><span class="lbl">Court</span><span class="num">${ci+1}</span><span class="grow"></span>${canSwap&&hasScores?`<span class="pill">Started · no swaps</span>`:courtPill(s,r,ci,live)}</div>
     <ol class="plist">${court.map((p,i)=>`<li class="${p===focusPid?"me":""} ${swapPick?.pid===p?"pick":""}"><span class="seed">${i+1}</span>
       ${canSwap&&!hasScores?`<button class="swap" data-swap="${p}" data-ci="${ci}" data-r="${r}">${esc(pName(s,p))}</button>`:`<span class="nm">${esc(pName(s,p))}</span>`}
       <span class="dupr">${rating(s.players[p]?.rating)}</span></li>`).join("")}</ol>
